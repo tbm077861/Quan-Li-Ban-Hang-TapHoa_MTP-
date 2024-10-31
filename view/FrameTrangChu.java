@@ -58,26 +58,26 @@ public class FrameTrangChu extends JFrame {
 		menuHeThong.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\system.png"));
 		menuBar.add(menuHeThong);
 		
-		JMenuItem mntmNewMenuItem_5 = new JMenuItem("Trang chủ");
-		mntmNewMenuItem_5.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\homepage.png"));
-		menuHeThong.add(mntmNewMenuItem_5);
+		JMenuItem btnTrangChu = new JMenuItem("Trang chủ");
+		btnTrangChu.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\homepage.png"));
+		menuHeThong.add(btnTrangChu);
 		
-		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Chỉnh sửa");
-		mntmNewMenuItem_1.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\editprofile.png"));
-		menuHeThong.add(mntmNewMenuItem_1);
+		JMenuItem btnChinhSua = new JMenuItem("Chỉnh sửa");
+		btnChinhSua.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\editprofile.png"));
+		menuHeThong.add(btnChinhSua);
 		
-		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Đăng xuất");
-		mntmNewMenuItem_3.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\signout.png"));
-		menuHeThong.add(mntmNewMenuItem_3);
+		JMenuItem btnDangXuat = new JMenuItem("Đăng xuất");
+		btnDangXuat.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\signout.png"));
+		menuHeThong.add(btnDangXuat);
 		
-		JMenuItem mntmNewMenuItem_4 = new JMenuItem("Thoát");
-		mntmNewMenuItem_4.addActionListener(new ActionListener() {
+		JMenuItem btnThoat = new JMenuItem("Thoát");
+		btnThoat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		});
-		mntmNewMenuItem_4.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\exit.png"));
-		menuHeThong.add(mntmNewMenuItem_4);
+		btnThoat.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\exit.png"));
+		menuHeThong.add(btnThoat);
 		
 		JMenu menuKhachHang = new JMenu("Khách Hàng");
 		menuKhachHang.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\customer.png"));
@@ -86,7 +86,7 @@ public class FrameTrangChu extends JFrame {
 		JMenuItem menuKhachHang_DanhSach = new JMenuItem("Danh Sách Khách Hàng");
 		menuKhachHang_DanhSach.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				quanLyKhachHang JFrameQLKH = new quanLyKhachHang();
+				FrameQuanLyKhachHang JFrameQLKH = new FrameQuanLyKhachHang();
 				JFrameQLKH.show();
 				dispose();
 				
@@ -101,7 +101,7 @@ public class FrameTrangChu extends JFrame {
 		JMenuItem mntmNewMenuItem = new JMenuItem("Danh Sách Sản Phẩm");
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				quanLySanPham JFrameQLSP = new quanLySanPham();
+				FrameQuanLySanPham JFrameQLSP = new FrameQuanLySanPham();
 				JFrameQLSP.show();
 				dispose();
 			}
@@ -115,7 +115,7 @@ public class FrameTrangChu extends JFrame {
 		JMenuItem menu = new JMenuItem("Danh sách hóa đơn");
 		menu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				quanLyHoaDon JFrameQLHD = new quanLyHoaDon();
+				FrameQuanLyHoaDon JFrameQLHD = new FrameQuanLyHoaDon();
 				JFrameQLHD.show();
 				dispose();
 			}

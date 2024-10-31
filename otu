@@ -1,0 +1,42 @@
+[33mcommit b98615c98553973ac1aa21e6ba2e6618e15749fa[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Pinnosee <dothanhminhphu26@gmail.com>
+Date:   Thu Oct 31 06:23:45 2024 +0700
+
+    Add icon and FrameTrangChu
+
+[33mcommit fa5bf2b4e7a133e7eb0708c8c9844b2c726c99d2[m
+Merge: d9b193e 400003d
+Author: Pinnosee <dothanhminhphu26@gmail.com>
+Date:   Wed Oct 30 15:44:48 2024 +0700
+
+    Add icon
+
+[33mcommit d9b193e95e21c73fd4409cfaf3ba93d6ae60599a[m
+Author: Pinnosee <dothanhminhphu26@gmail.com>
+Date:   Wed Oct 30 15:41:10 2024 +0700
+
+    Add icon
+
+[33mcommit 400003d5c2dd55a7b4e77365f1bb6a8ac96563e1[m
+Author: Tran Binh Minh <tbm077861@gmail.com>
+Date:   Wed Oct 30 13:54:39 2024 +0700
+
+    Cập nhật image và icons
+
+[33mcommit bda68c2cb2c39f57ad0af3d6535bc92f5fa14e60[m
+Author: Pinnosee <dothanhminhphu26@gmail.com>
+Date:   Wed Oct 30 13:50:10 2024 +0700
+
+    Thêm folder image
+
+[33mcommit a03bc2733ffb56c443fffdc3ec9df2d1ab591756[m
+Author: Pinnosee <dothanhminhphu26@gmail.com>
+Date:   Wed Oct 30 13:27:03 2024 +0700
+
+    Thêm trang dashboard
+
+[33mcommit cc1105fde17c2df6613cce9233431fa33efe782c[m
+Author: Tran Binh Minh <tbm077861@gmail.com>
+Date:   Tue Oct 29 17:35:03 2024 +0700
+
+    Thêm 2 form quản lí hóa đơn và sản phẩm và icons
