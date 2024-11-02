@@ -175,9 +175,9 @@ public class FrameDangNhap extends JFrame {
     }
 
     private boolean kiemTraDangNhap(String maNV, String matKhau, String chucVu) {
-        String sql = "SELECT CHUCVU FROM ACCOUNT WHERE MANV = ? AND RTRIM(PASS) = ? AND CHUCVU = ?";
+        String sql = "SELECT CHUCVU FROM TaiKhoanNV WHERE MANV = ? AND RTRIM(MatKhau) = ? AND ChucVu = ?";
         
-        try (Connection conn = ConnectDB.getConnection("DANGNHAP");
+        try (Connection conn = ConnectDB.getConnection("DB_QLBH");
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setString(1, maNV);
