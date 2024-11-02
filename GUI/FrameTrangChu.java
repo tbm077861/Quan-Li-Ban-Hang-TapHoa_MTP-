@@ -73,7 +73,7 @@ public class FrameTrangChu extends JFrame {
 		JMenuItem btnDangXuat = new JMenuItem("Đăng xuất");
 		btnDangXuat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int a = JOptionPane.showConfirmDialog(FrameTrangChu.this, "Bạn có muốn thoát ứng dụng không?", "Lựa chọn", JOptionPane.YES_NO_OPTION);
+				int a = JOptionPane.showConfirmDialog(FrameTrangChu.this, "Bạn có muốn đăng xuất ứng dụng không?", "Lựa chọn", JOptionPane.YES_NO_OPTION);
 		        if (a == JOptionPane.YES_OPTION) {
 		        	dispose();
 			        FrameDangNhap Framelogin = new FrameDangNhap();
@@ -88,7 +88,10 @@ public class FrameTrangChu extends JFrame {
 		JMenuItem btnThoat = new JMenuItem("Thoát");
 		btnThoat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();
+				int a = JOptionPane.showConfirmDialog(FrameTrangChu.this, "Bạn có muốn thoát ứng dụng không?", "Lựa chọn", JOptionPane.YES_NO_OPTION);
+		        if (a == JOptionPane.YES_OPTION) {
+		        	dispose();
+		        }
 			}
 		});
 		btnThoat.setIcon(new ImageIcon("icon\\exit.png"));
@@ -155,33 +158,33 @@ public class FrameTrangChu extends JFrame {
 		btnHoaDon.setIcon(new ImageIcon("icon\\bill.png"));
 		btnDanhMuc.add(btnHoaDon);
 		
-		JMenu menuThongKe = new JMenu("Thống kê");
-		menuThongKe.setIcon(new ImageIcon("icon\\static.png"));
-		menuBar.add(menuThongKe);
+		JMenu btnThongKe = new JMenu("Thống kê");
+		btnThongKe.setIcon(new ImageIcon("icon\\static.png"));
+		menuBar.add(btnThongKe);
 		
 		JMenuItem mntmNewMenuItem_6 = new JMenuItem("Doanh thu");
 		mntmNewMenuItem_6.setIcon(new ImageIcon("icon\\static_revenue.png"));
-		menuThongKe.add(mntmNewMenuItem_6);
+		btnThongKe.add(mntmNewMenuItem_6);
 		
 		JMenuItem mntmNewMenuItem_7 = new JMenuItem("Khách hàng");
 		mntmNewMenuItem_7.setIcon(new ImageIcon("icon\\static_customer.png"));
-		menuThongKe.add(mntmNewMenuItem_7);
+		btnThongKe.add(mntmNewMenuItem_7);
 		
 		JMenuItem mntmNewMenuItem_8 = new JMenuItem("Sản phẩm");
 		mntmNewMenuItem_8.setIcon(new ImageIcon("icon\\static_product.png"));
-		menuThongKe.add(mntmNewMenuItem_8);
+		btnThongKe.add(mntmNewMenuItem_8);
 		
-		JMenu menuThongTin = new JMenu("Thông tin");
-		menuThongTin.setIcon(new ImageIcon("icon\\info.png"));
-		menuBar.add(menuThongTin);
+		JMenu btnInfo = new JMenu("Thông tin");
+		btnInfo.setIcon(new ImageIcon("icon\\info.png"));
+		menuBar.add(btnInfo);
 		
 		JMenuItem btnThongTin = new JMenuItem("Thông tin phần mềm");
 		btnThongTin.setIcon(new ImageIcon("icon\\info_phanmem.png"));
-		menuThongTin.add(btnThongTin);
+		btnInfo.add(btnThongTin);
 		
 		JMenuItem btnDuongDan = new JMenuItem("Đường dẫn");
 		btnDuongDan.setIcon(new ImageIcon("icon\\link.png"));
-		menuThongTin.add(btnDuongDan);
+		btnInfo.add(btnDuongDan);
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(255, 255, 255));
@@ -193,7 +196,9 @@ public class FrameTrangChu extends JFrame {
 		lblUsername.setBounds(1004, 0, 128, 39);
 		panel.add(lblUsername);
 		
-		
+		if ("Nhân Viên".equals(chucVu)) {
+	        btnNhanVien.setEnabled(false);
+	    }
 		
 		this.setVisible(true);
 	}
