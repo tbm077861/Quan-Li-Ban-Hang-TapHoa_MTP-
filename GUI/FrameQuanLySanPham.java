@@ -1,41 +1,35 @@
 package GUI;
 
+import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import javax.swing.JTextField;
-import com.toedter.calendar.JDateChooser;
-
-import controller.QuanLiSanPham;
-import model.SanPham;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.JButton;
-import com.toedter.components.JSpinField;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.JSlider;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
-public class FrameQuanLySanPham extends JFrame implements ActionListener {
+import com.toedter.calendar.JDateChooser;
+
+import Dao.QuanLiSanPham;
+import entity.SanPham;
+
+public class FrameQuanLySanPham extends JPanel implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel pnlBackGround;
@@ -70,22 +64,17 @@ public class FrameQuanLySanPham extends JFrame implements ActionListener {
 			}
 		});
 	}
-
 	/**
-	 * Create the frame.
+	 * Create the panel.
 	 */
 	public FrameQuanLySanPham() {
-		setTitle("Quản lí sản phẩm\r\n");
-		setResizable(true);
-		setSize(1440,1024);
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
+		setLayout(null);
+
 		pnlBackGround = new JPanel();
+		pnlBackGround.setBounds(0, 0, 1540, 755);
 		pnlBackGround.setBackground(new Color(255, 187, 53));
 		pnlBackGround.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		setContentPane(pnlBackGround);
+		add(pnlBackGround);
 		pnlBackGround.setLayout(null);
 		
 		JPanel panel = new JPanel();
@@ -95,7 +84,7 @@ public class FrameQuanLySanPham extends JFrame implements ActionListener {
 		panel.setLayout(null);
 		
 		btnThem = new JButton("Thêm");
-		btnThem.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnThem.png"));
+		btnThem.setIcon(new ImageIcon("icon\\btnThem.png"));
 		btnThem.setBackground(new Color(167, 62, 20));
 		btnThem.setForeground(new Color(255, 255, 255));
 		btnThem.setFont(new Font("Tahoma", Font.BOLD, 18));
@@ -103,7 +92,7 @@ public class FrameQuanLySanPham extends JFrame implements ActionListener {
 		panel.add(btnThem);
 		
 		JButton btnLuu = new JButton("Lưu");
-		btnLuu.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnLuu.png"));
+		btnLuu.setIcon(new ImageIcon("icon\\btnLuu.png"));
 		btnLuu.setForeground(Color.WHITE);
 		btnLuu.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnLuu.setBackground(new Color(167, 62, 20));
@@ -111,7 +100,7 @@ public class FrameQuanLySanPham extends JFrame implements ActionListener {
 		panel.add(btnLuu);
 		
 		JButton btnSua = new JButton("Sửa");
-		btnSua.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnSua.png"));
+		btnSua.setIcon(new ImageIcon("icon\\btnSua.png"));
 		btnSua.setForeground(Color.WHITE);
 		btnSua.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnSua.setBackground(new Color(167, 62, 20));
@@ -119,7 +108,7 @@ public class FrameQuanLySanPham extends JFrame implements ActionListener {
 		panel.add(btnSua);
 		
 		btnXoa = new JButton("Xóa");
-		btnXoa.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnXoa.png"));
+		btnXoa.setIcon(new ImageIcon("icon\\btnXoa.png"));
 		btnXoa.setForeground(Color.WHITE);
 		btnXoa.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnXoa.setBackground(new Color(167, 62, 20));
@@ -127,7 +116,7 @@ public class FrameQuanLySanPham extends JFrame implements ActionListener {
 		panel.add(btnXoa);
 		
 		btnHuy = new JButton("Hủy");
-		btnHuy.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnCancel.png"));
+		btnHuy.setIcon(new ImageIcon("icon\\btnCancel.png"));
 		btnHuy.setForeground(Color.WHITE);
 		btnHuy.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnHuy.setBackground(new Color(167, 62, 20));
@@ -135,7 +124,7 @@ public class FrameQuanLySanPham extends JFrame implements ActionListener {
 		panel.add(btnHuy);
 		
 		btnXuat = new JButton("Xuất");
-		btnXuat.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnprint.png"));
+		btnXuat.setIcon(new ImageIcon("icon\\btnprint.png"));
 		btnXuat.setForeground(Color.WHITE);
 		btnXuat.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnXuat.setBackground(new Color(167, 62, 20));
@@ -198,7 +187,7 @@ public class FrameQuanLySanPham extends JFrame implements ActionListener {
 		pnlBackGround.add(txtNgaySX);
 		
 		JLabel logoMTP = new JLabel("");
-		logoMTP.setIcon(new ImageIcon("D:\\Download\\logoMTP 1.png"));
+		logoMTP.setIcon(new ImageIcon("logoMTP 1.png"));
 		logoMTP.setBounds(1054, -3, 403, 214);
 		pnlBackGround.add(logoMTP);
 		

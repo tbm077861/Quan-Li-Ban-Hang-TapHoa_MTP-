@@ -1,74 +1,89 @@
 package GUI;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.BoxLayout;
-import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import java.awt.BorderLayout;
-import javax.swing.JMenu;
-import javax.swing.SwingConstants;
-import java.awt.Insets;
-import javax.swing.ImageIcon;
-import java.awt.Button;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
+import java.awt.*;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class FrameTrangChu extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-
+	private FrameQuanLyKhachHang frameQLKH;
+	private FrameQuanLySanPham frameQLSP;
+	private FrameQuanLyHoaDon frameQLHD;
+	private FrameQuanLyNhanVien frameQLNV;
+	public String maNV, chucVu;
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					FrameTrangChu frame = new FrameTrangChu();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					FrameTrangChu frame = new FrameTrangChu(maNV, chucVu);
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
 	 */
-	public FrameTrangChu() {
+	public FrameTrangChu(String maNV, String chucVu) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage("image\\store.png"));
 		setTitle("Quản lý bán hàng");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1003, 630);
 		setLocationRelativeTo(null);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		getContentPane().setLayout(new BorderLayout(0, 0));
+		
+		JLabel background_image = new JLabel("");
+		background_image.setIcon(new ImageIcon("image\\market.jpg"));
+		getContentPane().add(background_image);
 		
 		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
+		getContentPane().add(menuBar, BorderLayout.NORTH);
+		menuBar.setBackground(new Color(192, 192, 192));
 		
-		JMenu menuHeThong = new JMenu("Hệ thống");
-		menuHeThong.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\system.png"));
-		menuBar.add(menuHeThong);
+		JMenu btnHeThong = new JMenu("Hệ thống");
+		btnHeThong.setIcon(new ImageIcon("icon\\system.png"));
+		menuBar.add(btnHeThong);
 		
 		JMenuItem btnTrangChu = new JMenuItem("Trang chủ");
-		btnTrangChu.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\homepage.png"));
-		menuHeThong.add(btnTrangChu);
+		btnTrangChu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				getContentPane().removeAll();
+				getContentPane().add(menuBar, BorderLayout.NORTH);
+		        getContentPane().add(background_image, BorderLayout.CENTER);
+		        revalidate();
+		        repaint();
+			}
+		});
+		btnTrangChu.setIcon(new ImageIcon("icon\\homepage.png"));
+		btnHeThong.add(btnTrangChu);
 		
 		JMenuItem btnChinhSua = new JMenuItem("Chỉnh sửa");
-		btnChinhSua.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\editprofile.png"));
-		menuHeThong.add(btnChinhSua);
+		btnChinhSua.setIcon(new ImageIcon("icon\\editprofile.png"));
+		btnHeThong.add(btnChinhSua);
 		
 		JMenuItem btnDangXuat = new JMenuItem("Đăng xuất");
-		btnDangXuat.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\signout.png"));
-		menuHeThong.add(btnDangXuat);
+		btnDangXuat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int a = JOptionPane.showConfirmDialog(FrameTrangChu.this, "Bạn có muốn thoát ứng dụng không?", "Lựa chọn", JOptionPane.YES_NO_OPTION);
+		        if (a == JOptionPane.YES_OPTION) {
+		        	dispose();
+			        FrameDangNhap Framelogin = new FrameDangNhap();
+			        Framelogin.setVisible(true); 
+		        }
+				
+			}
+		});
+		btnDangXuat.setIcon(new ImageIcon("icon\\signout.png"));
+		btnHeThong.add(btnDangXuat);
 		
 		JMenuItem btnThoat = new JMenuItem("Thoát");
 		btnThoat.addActionListener(new ActionListener() {
@@ -76,84 +91,110 @@ public class FrameTrangChu extends JFrame {
 				dispose();
 			}
 		});
-		btnThoat.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\exit.png"));
-		menuHeThong.add(btnThoat);
+		btnThoat.setIcon(new ImageIcon("icon\\exit.png"));
+		btnHeThong.add(btnThoat);
 		
-		JMenu menuKhachHang = new JMenu("Khách Hàng");
-		menuKhachHang.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\customer.png"));
-		menuBar.add(menuKhachHang);
+		JMenu btnDanhMuc = new JMenu("Danh mục");
+		btnDanhMuc.setIcon(new ImageIcon("icon\\catalog.png"));
+		menuBar.add(btnDanhMuc);
 		
-		JMenuItem menuKhachHang_DanhSach = new JMenuItem("Danh Sách Khách Hàng");
-		menuKhachHang_DanhSach.addActionListener(new ActionListener() {
+		JMenuItem btnKhachHang = new JMenuItem("Khách hàng");
+		btnKhachHang.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				FrameQuanLyKhachHang JFrameQLKH = new FrameQuanLyKhachHang();
-				JFrameQLKH.show();
-				dispose();
-				
+				frameQLKH = new FrameQuanLyKhachHang();
+				getContentPane().removeAll();
+				getContentPane().add(menuBar, BorderLayout.NORTH);
+				getContentPane().add(frameQLKH, BorderLayout.CENTER);
+				revalidate();
+				repaint();
 			}
 		});
-		menuKhachHang.add(menuKhachHang_DanhSach);
 		
-		JMenu menuSanPham = new JMenu("Sản phẩm");
-		menuSanPham.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\product.png"));
-		menuBar.add(menuSanPham);
+		btnKhachHang.setIcon(new ImageIcon("icon\\customer.png"));
+		btnDanhMuc.add(btnKhachHang);
 		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Danh Sách Sản Phẩm");
-		mntmNewMenuItem.addActionListener(new ActionListener() {
+		JMenuItem btnNhanVien = new JMenuItem("Nhân viên");
+		btnNhanVien.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				FrameQuanLySanPham JFrameQLSP = new FrameQuanLySanPham();
-				JFrameQLSP.show();
-				dispose();
+				frameQLNV = new FrameQuanLyNhanVien();
+				getContentPane().removeAll();
+				getContentPane().add(menuBar, BorderLayout.NORTH);
+				getContentPane().add(frameQLNV, BorderLayout.CENTER);
+				revalidate();
+				repaint();
 			}
 		});
-		menuSanPham.add(mntmNewMenuItem);
+		btnNhanVien.setIcon(new ImageIcon("icon\\employee.png"));
+		btnDanhMuc.add(btnNhanVien);
 		
-		JMenu menuHoaDon = new JMenu("Hóa đơn");
-		menuHoaDon.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\bill.png"));
-		menuBar.add(menuHoaDon);
-		
-		JMenuItem menu = new JMenuItem("Danh sách hóa đơn");
-		menu.addActionListener(new ActionListener() {
+		JMenuItem btnSanPham = new JMenuItem("Sản phẩm");
+		btnSanPham.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				FrameQuanLyHoaDon JFrameQLHD = new FrameQuanLyHoaDon();
-				JFrameQLHD.show();
-				dispose();
+				frameQLSP = new FrameQuanLySanPham();
+				getContentPane().removeAll();
+				getContentPane().add(menuBar, BorderLayout.NORTH);
+				getContentPane().add(frameQLSP, BorderLayout.CENTER);
+				revalidate();
+				repaint();
 			}
 		});
-		menuHoaDon.add(menu);
+		btnSanPham.setIcon(new ImageIcon("icon\\product.png"));
+		btnDanhMuc.add(btnSanPham);
 		
-		JMenu menuNhanVien = new JMenu("Nhân Viên");
-		menuNhanVien.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\employee.png"));
-		menuBar.add(menuNhanVien);
-		
-		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Danh sách nhân viên");
-		menuNhanVien.add(mntmNewMenuItem_2);
+		JMenuItem btnHoaDon = new JMenuItem("Hóa đơn");
+		btnHoaDon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frameQLHD = new FrameQuanLyHoaDon();
+				getContentPane().removeAll();
+				getContentPane().add(menuBar, BorderLayout.NORTH);
+				getContentPane().add(frameQLHD, BorderLayout.CENTER);
+				revalidate();
+				repaint();
+			}
+		});
+		btnHoaDon.setIcon(new ImageIcon("icon\\bill.png"));
+		btnDanhMuc.add(btnHoaDon);
 		
 		JMenu menuThongKe = new JMenu("Thống kê");
-		menuThongKe.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\static.png"));
+		menuThongKe.setIcon(new ImageIcon("icon\\static.png"));
 		menuBar.add(menuThongKe);
 		
 		JMenuItem mntmNewMenuItem_6 = new JMenuItem("Doanh thu");
-		mntmNewMenuItem_6.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\static_revenue.png"));
+		mntmNewMenuItem_6.setIcon(new ImageIcon("icon\\static_revenue.png"));
 		menuThongKe.add(mntmNewMenuItem_6);
 		
 		JMenuItem mntmNewMenuItem_7 = new JMenuItem("Khách hàng");
-		mntmNewMenuItem_7.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\static_customer.png"));
+		mntmNewMenuItem_7.setIcon(new ImageIcon("icon\\static_customer.png"));
 		menuThongKe.add(mntmNewMenuItem_7);
 		
 		JMenuItem mntmNewMenuItem_8 = new JMenuItem("Sản phẩm");
-		mntmNewMenuItem_8.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\static_product.png"));
+		mntmNewMenuItem_8.setIcon(new ImageIcon("icon\\static_product.png"));
 		menuThongKe.add(mntmNewMenuItem_8);
 		
 		JMenu menuThongTin = new JMenu("Thông tin");
-		menuThongTin.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\info.png"));
+		menuThongTin.setIcon(new ImageIcon("icon\\info.png"));
 		menuBar.add(menuThongTin);
 		
-		JLabel background_image = new JLabel("");
-		background_image.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\image\\market.jpg"));
-		getContentPane().add(background_image, BorderLayout.CENTER);
+		JMenuItem btnThongTin = new JMenuItem("Thông tin phần mềm");
+		btnThongTin.setIcon(new ImageIcon("icon\\info_phanmem.png"));
+		menuThongTin.add(btnThongTin);
+		
+		JMenuItem btnDuongDan = new JMenuItem("Đường dẫn");
+		btnDuongDan.setIcon(new ImageIcon("icon\\link.png"));
+		menuThongTin.add(btnDuongDan);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(255, 255, 255));
+		menuBar.add(panel);
+		panel.setLayout(null);
+		
+		JLabel lblUsername = new JLabel(chucVu + " " + maNV);
+		lblUsername.setIcon(new ImageIcon("icon\\user.png"));
+		lblUsername.setBounds(1004, 0, 128, 39);
+		panel.add(lblUsername);
+		
+		
 		
 		this.setVisible(true);
 	}
-
 }
