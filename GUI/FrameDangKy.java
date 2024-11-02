@@ -1,4 +1,4 @@
-package quanLyCuaHangTienLoi;
+package GUI;
 
 import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
@@ -34,6 +34,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+
+import connectDB.ConnectDB;
+import entity.TaiKhoan;
 
 public class FrameDangKy extends JFrame {
 

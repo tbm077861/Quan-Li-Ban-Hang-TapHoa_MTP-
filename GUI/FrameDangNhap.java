@@ -1,4 +1,4 @@
-package quanLyCuaHangTienLoi;
+package GUI;
 
 import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
@@ -32,6 +32,8 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
+import connectDB.ConnectDB;
+
 public class FrameDangNhap extends JFrame {
     private JLabel lblTitle;
     private JLabel lblMaNV;
@@ -42,7 +44,7 @@ public class FrameDangNhap extends JFrame {
     private JButton btnThoat;
     private JComboBox<String> cboChucVu;
     private JLabel lblChucVu;
-    private String backgroundPath = "image\\BGStore.jpg"; // Đường dẫn mặc định
+    private String backgroundPath = "image\\BGStore.png";
 
     class BackgroundPanel extends JPanel {
         private Image backgroundImage;
@@ -214,15 +216,9 @@ public class FrameDangNhap extends JFrame {
                 "Thông báo", 
                 JOptionPane.INFORMATION_MESSAGE);
             
-            // Mở form tương ứng với quyền
-            if ("Quản Lý".equals(chucVu)) {
-                // TODO: Mở form quản lý
-                this.dispose();
-            } else {
-            	FrameTrangChu frameTrangChu = new FrameTrangChu();
-                frameTrangChu.setVisible(true); // Mở FrameTrangChu
-                this.dispose();
-            }
+            FrameTrangChu frameTrangChu = new FrameTrangChu(maNV, chucVu);
+            frameTrangChu.setVisible(true); // Mở FrameTrangChu
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, 
                 "Thông tin đăng nhập không chính xác hoặc không có quyền truy cập!", 
@@ -230,6 +226,7 @@ public class FrameDangNhap extends JFrame {
                 JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     private void btnThoatActionPerformed() {
         int a = JOptionPane.showConfirmDialog(this, "Bạn có muốn thoát ứng dụng không?", "Lựa chọn", JOptionPane.YES_NO_OPTION);

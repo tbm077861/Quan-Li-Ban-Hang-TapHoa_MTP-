@@ -19,16 +19,16 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.JButton;
 
-public class FrameQuanLyHoaDon extends JFrame {
+public class FrameQuanLyHoaDon extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel pnlBackGround;
-	private JTextField txtMaHoaDon;
-	private JTextField txtMaKhachHang;
-	private JTextField txtTenKhachHang;
-	private JTextField txtChietKhau;
-	private JTextField txtTongHoaDon;
-	private JTable tableHoaDon;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private JTextField textField_4;
+	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -50,17 +50,14 @@ public class FrameQuanLyHoaDon extends JFrame {
 	 * Create the frame.
 	 */
 	public FrameQuanLyHoaDon() {
-		setTitle("Quản lí hóa đơn\r\n");
-		setResizable(true);
-		setSize(1440,1024);
+		setBounds(100, 100, 1540, 755);
+		setLayout(null);
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
 		pnlBackGround = new JPanel();
+		pnlBackGround.setBounds(0, 0, 1540, 755);
 		pnlBackGround.setBackground(new Color(255, 187, 53));
 		pnlBackGround.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		setContentPane(pnlBackGround);
+		add(pnlBackGround);
 		pnlBackGround.setLayout(null);
 		
 		JPanel panel = new JPanel();
@@ -117,76 +114,76 @@ public class FrameQuanLyHoaDon extends JFrame {
 		btnThot.setBounds(1226, 20, 156, 45);
 		panel.add(btnThot);
 		
-		JLabel lblTenKhachHang = new JLabel("Tên khách hàng:");
-		lblTenKhachHang.setBounds(55, 147, 160, 40);
-		lblTenKhachHang.setFont(new Font("Segoe UI", Font.BOLD, 20));
-		pnlBackGround.add(lblTenKhachHang);
+		JLabel lblMota = new JLabel("Tên khách hàng:");
+		lblMota.setBounds(55, 147, 160, 40);
+		lblMota.setFont(new Font("Segoe UI", Font.BOLD, 20));
+		pnlBackGround.add(lblMota);
 		
-		JLabel lblMaHoaDon = new JLabel("Mã hóa đơn:");
-		lblMaHoaDon.setBounds(55, 27, 160, 40);
-		lblMaHoaDon.setFont(new Font("Segoe UI", Font.BOLD, 20));
-		pnlBackGround.add(lblMaHoaDon);
+		JLabel lblMaHang = new JLabel("Mã hóa đơn:");
+		lblMaHang.setBounds(55, 27, 160, 40);
+		lblMaHang.setFont(new Font("Segoe UI", Font.BOLD, 20));
+		pnlBackGround.add(lblMaHang);
 		
-		JLabel lblMaKhachHang = new JLabel("Mã khách hàng:");
-		lblMaKhachHang.setBounds(55, 86, 160, 40);
-		lblMaKhachHang.setFont(new Font("Segoe UI", Font.BOLD, 20));
-		pnlBackGround.add(lblMaKhachHang);
+		JLabel lblTenHang = new JLabel("Mã khách hàng:");
+		lblTenHang.setBounds(55, 86, 160, 40);
+		lblTenHang.setFont(new Font("Segoe UI", Font.BOLD, 20));
+		pnlBackGround.add(lblTenHang);
 		
-		JLabel lblNgayLap = new JLabel("Ngày lập:");
-		lblNgayLap.setFont(new Font("Segoe UI", Font.BOLD, 20));
-		lblNgayLap.setBounds(588, 27, 160, 40);
-		pnlBackGround.add(lblNgayLap);
+		JLabel lblDonGia = new JLabel("Ngày lập:");
+		lblDonGia.setFont(new Font("Segoe UI", Font.BOLD, 20));
+		lblDonGia.setBounds(588, 27, 160, 40);
+		pnlBackGround.add(lblDonGia);
 		
-		JLabel lblTongHoaDon = new JLabel("Tổng hóa đơn:");
-		lblTongHoaDon.setFont(new Font("Segoe UI", Font.BOLD, 20));
-		lblTongHoaDon.setBounds(588, 86, 160, 40);
-		pnlBackGround.add(lblTongHoaDon);
+		JLabel lblNhaSX = new JLabel("Tổng hóa đơn:");
+		lblNhaSX.setFont(new Font("Segoe UI", Font.BOLD, 20));
+		lblNhaSX.setBounds(588, 86, 160, 40);
+		pnlBackGround.add(lblNhaSX);
 		
-		JLabel lblChietKhau = new JLabel("Chiết khấu(%):");
-		lblChietKhau.setFont(new Font("Segoe UI", Font.BOLD, 20));
-		lblChietKhau.setBounds(588, 147, 160, 40);
-		pnlBackGround.add(lblChietKhau);
+		JLabel lblNgaySX = new JLabel("Chiết khấu(%):");
+		lblNgaySX.setFont(new Font("Segoe UI", Font.BOLD, 20));
+		lblNgaySX.setBounds(588, 147, 160, 40);
+		pnlBackGround.add(lblNgaySX);
 		
-		txtMaHoaDon = new JTextField();
-		txtMaHoaDon.setBounds(235, 31, 317, 43);
-		pnlBackGround.add(txtMaHoaDon);
-		txtMaHoaDon.setColumns(10);
+		textField = new JTextField();
+		textField.setBounds(235, 31, 317, 43);
+		pnlBackGround.add(textField);
+		textField.setColumns(10);
 		
-		txtMaKhachHang = new JTextField();
-		txtMaKhachHang.setColumns(10);
-		txtMaKhachHang.setBounds(235, 90, 317, 43);
-		pnlBackGround.add(txtMaKhachHang);
+		textField_1 = new JTextField();
+		textField_1.setColumns(10);
+		textField_1.setBounds(235, 90, 317, 43);
+		pnlBackGround.add(textField_1);
 		
-		txtTenKhachHang = new JTextField();
-		txtTenKhachHang.setColumns(10);
-		txtTenKhachHang.setBounds(235, 151, 317, 43);
-		pnlBackGround.add(txtTenKhachHang);
+		textField_2 = new JTextField();
+		textField_2.setColumns(10);
+		textField_2.setBounds(235, 151, 317, 43);
+		pnlBackGround.add(textField_2);
 		
-		txtChietKhau = new JTextField();
-		txtChietKhau.setColumns(10);
-		txtChietKhau.setBounds(740, 151, 259, 43);
-		pnlBackGround.add(txtChietKhau);
+		textField_3 = new JTextField();
+		textField_3.setColumns(10);
+		textField_3.setBounds(740, 151, 259, 43);
+		pnlBackGround.add(textField_3);
 		
-		txtTongHoaDon = new JTextField();
-		txtTongHoaDon.setColumns(10);
-		txtTongHoaDon.setBounds(740, 90, 259, 43);
-		pnlBackGround.add(txtTongHoaDon);
+		textField_4 = new JTextField();
+		textField_4.setColumns(10);
+		textField_4.setBounds(740, 90, 259, 43);
+		pnlBackGround.add(textField_4);
 		
-		JDateChooser txtNgayLap = new JDateChooser();
-		txtNgayLap.setBounds(740, 27, 259, 40);
-		pnlBackGround.add(txtNgayLap);
+		JDateChooser dateChooser = new JDateChooser();
+		dateChooser.setBounds(740, 27, 259, 40);
+		pnlBackGround.add(dateChooser);
 		
-		JLabel logoMTP = new JLabel("");
-		logoMTP.setIcon(new ImageIcon("D:\\Download\\logoMTP 1.png"));
-		logoMTP.setBounds(1009, 10, 403, 214);
-		pnlBackGround.add(logoMTP);
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setIcon(new ImageIcon("D:\\Download\\logoMTP 1.png"));
+		lblNewLabel.setBounds(1009, 10, 403, 214);
+		pnlBackGround.add(lblNewLabel);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 348, 1426, 292);
 		pnlBackGround.add(scrollPane);
 		
-		tableHoaDon = new JTable();
-		tableHoaDon.setModel(new DefaultTableModel(
+		table = new JTable();
+		table.setModel(new DefaultTableModel(
 			new Object[][] {
 				{null, null, null, null, null, null},
 				{null, null, null, null, null, null},
@@ -209,20 +206,19 @@ public class FrameQuanLyHoaDon extends JFrame {
 				{null, null, null, null, null, null},
 			},
 			new String[] {
-				"M\u00E3 h\u00F3a \u0111\u01A1n", "M\u00E3 kh\u00E1ch h\u00E0ng", "T\u00EAn kh\u00E1ch h\u00E0ng", "Ng\u00E0y l\u1EADp", "T\u1ED5ng h\u00F3a \u0111\u01A1n", "Chi\u1EBFt kh\u1EA5u"
+				"Mã hóa đơn", "Mã khách hàng", "Tên khách hàng", "Ngày lập", "Tổng hóa đơn", "Chiết khấu"
 			}
 		) {
 			Class[] columnTypes = new Class[] {
-				String.class, String.class, String.class, String.class, Double.class, Double.class
+				String.class, String.class, String.class, Double.class, String.class, String.class
 			};
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
 			}
 		});
-		tableHoaDon.getColumnModel().getColumn(2).setResizable(false);
-		JTableHeader header = tableHoaDon.getTableHeader();
+		JTableHeader header = table.getTableHeader();
         header.setFont(new Font("Arial", Font.BOLD, 18));
-		scrollPane.setViewportView(tableHoaDon);
+		scrollPane.setViewportView(table);
 //		 GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 //		 gd.setFullScreenWindow(this);
 	}
