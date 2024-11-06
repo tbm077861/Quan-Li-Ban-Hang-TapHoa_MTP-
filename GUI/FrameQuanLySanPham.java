@@ -1,35 +1,55 @@
 package GUI;
 
-import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Font;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import java.awt.Color;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import javax.swing.JTextField;
+import com.toedter.calendar.JDateChooser;
+
+import controller.QuanLiSanPham;
+import model.SanPham;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.JButton;
+import com.toedter.components.JSpinField;
 
-import com.toedter.calendar.JDateChooser;
+import DAO.SanPhamDAO;
+import connectDB.ConnectDB;
 
-import Dao.QuanLiSanPham;
-import entity.SanPham;
+import javax.swing.JSpinner;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.JSlider;
 
-public class FrameQuanLySanPham extends JPanel implements ActionListener{
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class FrameQuanLySanPham extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel pnlBackGround;
@@ -39,15 +59,19 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener{
 	private JTextField txtDonGia;
 	private JDateChooser txtNgaySX;
 	private JTable tableSanPham;
-	private QuanLiSanPham dsSanPham;
 	private JButton btnThem;
 	private JButton btnXoa;
 	private JButton btnHuy;
 	private JButton btnXuat;
+	private JButton btnLoc;
+	private JButton btnTaiLai;
+	private JButton btnTim;
+	private JButton btnSua;
 	private JTextField txtMaTim;
 	private JTextField txtEnd;
 	private JTextField txtStart;
 	private JSpinner txtSoLuong;
+	private SanPhamDAO sanPhamDAO = new SanPhamDAO();
 
 	/**
 	 * Launch the application.
@@ -64,17 +88,22 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener{
 			}
 		});
 	}
+
 	/**
-	 * Create the panel.
+	 * Create the frame.
 	 */
 	public FrameQuanLySanPham() {
-		setLayout(null);
-
+		setTitle("Quản lí sản phẩm\r\n");
+		setResizable(true);
+		setSize(1440,1024);
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
 		pnlBackGround = new JPanel();
-		pnlBackGround.setBounds(0, 0, 1540, 755);
 		pnlBackGround.setBackground(new Color(255, 187, 53));
 		pnlBackGround.setBorder(new EmptyBorder(5, 5, 5, 5));
-		add(pnlBackGround);
+
+		setContentPane(pnlBackGround);
 		pnlBackGround.setLayout(null);
 		
 		JPanel panel = new JPanel();
@@ -84,51 +113,43 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener{
 		panel.setLayout(null);
 		
 		btnThem = new JButton("Thêm");
-		btnThem.setIcon(new ImageIcon("icon\\btnThem.png"));
+		btnThem.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnThem.png"));
 		btnThem.setBackground(new Color(167, 62, 20));
 		btnThem.setForeground(new Color(255, 255, 255));
 		btnThem.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnThem.setBounds(55, 20, 156, 45);
 		panel.add(btnThem);
 		
-		JButton btnLuu = new JButton("Lưu");
-		btnLuu.setIcon(new ImageIcon("icon\\btnLuu.png"));
-		btnLuu.setForeground(Color.WHITE);
-		btnLuu.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnLuu.setBackground(new Color(167, 62, 20));
-		btnLuu.setBounds(278, 20, 156, 45);
-		panel.add(btnLuu);
-		
-		JButton btnSua = new JButton("Sửa");
-		btnSua.setIcon(new ImageIcon("icon\\btnSua.png"));
+		btnSua = new JButton("Sửa");
+		btnSua.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnSua.png"));
 		btnSua.setForeground(Color.WHITE);
 		btnSua.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnSua.setBackground(new Color(167, 62, 20));
-		btnSua.setBounds(498, 20, 156, 45);
+		btnSua.setBounds(300, 20, 156, 45);
 		panel.add(btnSua);
 		
 		btnXoa = new JButton("Xóa");
-		btnXoa.setIcon(new ImageIcon("icon\\btnXoa.png"));
+		btnXoa.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnXoa.png"));
 		btnXoa.setForeground(Color.WHITE);
 		btnXoa.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnXoa.setBackground(new Color(167, 62, 20));
-		btnXoa.setBounds(716, 20, 156, 45);
+		btnXoa.setBounds(565, 20, 156, 45);
 		panel.add(btnXoa);
 		
 		btnHuy = new JButton("Hủy");
-		btnHuy.setIcon(new ImageIcon("icon\\btnCancel.png"));
+		btnHuy.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnCancel.png"));
 		btnHuy.setForeground(Color.WHITE);
 		btnHuy.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnHuy.setBackground(new Color(167, 62, 20));
-		btnHuy.setBounds(961, 20, 156, 45);
+		btnHuy.setBounds(862, 20, 156, 45);
 		panel.add(btnHuy);
 		
 		btnXuat = new JButton("Xuất");
-		btnXuat.setIcon(new ImageIcon("icon\\btnprint.png"));
+		btnXuat.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnprint.png"));
 		btnXuat.setForeground(Color.WHITE);
 		btnXuat.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnXuat.setBackground(new Color(167, 62, 20));
-		btnXuat.setBounds(1226, 20, 156, 45);
+		btnXuat.setBounds(1166, 20, 156, 45);
 		panel.add(btnXuat);
 		
 		JLabel lblMota = new JLabel("Mô tả:");
@@ -187,7 +208,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener{
 		pnlBackGround.add(txtNgaySX);
 		
 		JLabel logoMTP = new JLabel("");
-		logoMTP.setIcon(new ImageIcon("logoMTP 1.png"));
+		logoMTP.setIcon(new ImageIcon("D:\\Download\\logoMTP 1.png"));
 		logoMTP.setBounds(1054, -3, 403, 214);
 		pnlBackGround.add(logoMTP);
 		
@@ -241,7 +262,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener{
 		panelTimKiem.add(txtMaTim);
 		txtMaTim.setColumns(10);
 		
-		JButton btnTim = new JButton("Tìm");
+		btnTim = new JButton("Tìm");
 		btnTim.setBackground(new Color(255, 0, 0));
 		btnTim.setFont(new Font("Tahoma", Font.BOLD, 20));
 		btnTim.setBounds(120, 179, 85, 25);
@@ -272,7 +293,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener{
 		txtStart.setBounds(51, 288, 96, 31);
 		panelTimKiem.add(txtStart);
 		
-		JButton btnLoc = new JButton("Lọc");
+		btnLoc = new JButton("Lọc");
 		btnLoc.addActionListener(this);
 			
 		btnLoc.setFont(new Font("Tahoma", Font.BOLD, 20));
@@ -299,7 +320,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener{
 		dateChooser.setBounds(186, 144, 136, 25);
 		panelTimKiem.add(dateChooser);
 		
-		JButton btnTaiLai = new JButton("Tải lại");
+		btnTaiLai = new JButton("Tải lại");
 		btnTaiLai.setFont(new Font("Tahoma", Font.BOLD, 20));
 		btnTaiLai.setBackground(Color.RED);
 		btnTaiLai.setBounds(194, 347, 104, 25);
@@ -311,14 +332,39 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener{
 //		 gd.setFullScreenWindow(this);
 		
 		//Khởi tạo danh sách
-		dsSanPham = new QuanLiSanPham();
-		txtMaHang.setText(generateMaHang());
+		txtMaHang.setText(sanPhamDAO.getNextMaHang());
 		txtTenHang.requestFocus();
+		txtTenHang.selectAll();
+		loadDataToTable();
+		//Hiển thị dữ liệu để chỉnh sửa
+
+tableSanPham.addMouseListener(new java.awt.event.MouseAdapter() {
+    @Override
+    public void mouseClicked(java.awt.event.MouseEvent evt) {
+        int selectedRow = tableSanPham.getSelectedRow();
+        if (selectedRow != -1) {
+            txtMaHang.setText((String) tableSanPham.getValueAt(selectedRow, 0));
+            txtTenHang.setText((String) tableSanPham.getValueAt(selectedRow, 1));
+            txtMoTa.setText((String) tableSanPham.getValueAt(selectedRow, 2));
+            txtDonGia.setText(tableSanPham.getValueAt(selectedRow, 3).toString());
+            txtSoLuong.setValue(tableSanPham.getValueAt(selectedRow, 4));
+            try {
+                Date date = new SimpleDateFormat("dd-MM-yyyy").parse((String) tableSanPham.getValueAt(selectedRow, 5));
+                txtNgaySX.setDate(date);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+});
+
 		//Action Listener
 		btnThem.addActionListener(this);
 		btnLoc.addActionListener(this);
 		btnXoa.addActionListener(this);
+		btnSua.addActionListener(this);
 		btnHuy.addActionListener(this);
+		btnXuat.addActionListener(this);
 	}
 
 @Override
@@ -326,32 +372,63 @@ public void actionPerformed(ActionEvent e) {
 	// TODO Auto-generated method stub
 	Object o = e.getSource();
 	if (o.equals(btnThem)) {
-		addDataToTable();
-	}
-	if(o.equals(btnXoa)) {
-		deleteData();
-	}
-	
-}
-
-
-private void deleteData() {
-	// TODO Auto-generated method stub
-	int row = tableSanPham.getSelectedRow();
-	if(row == -1) {
-        JOptionPane.showMessageDialog(this, "Vui lòng chọn dòng cần xóa");
-        return;
-	}
-	String maHang = tableSanPham.getValueAt(row, 0).toString();
-	if(dsSanPham.removeSanPham(maHang)) {
-        DefaultTableModel model = (DefaultTableModel) tableSanPham.getModel();
-        model.removeRow(row);
-        txtMaHang.setText(generateMaHang());
-        JOptionPane.showMessageDialog(this, "Xóa thành công");
-        }else {
-			JOptionPane.showMessageDialog(this, "Xóa thất bại");
+		if (isMaHangDuplicate(txtMaHang.getText())) {
+            JOptionPane.showMessageDialog(this, "Mã hàng đã tồn tại");
+            return;
         }
+        if (validateData()) {
+            SanPham sp = revertData();
+            if (addSanPhamToDatabase(sp)) {
+                JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công");
+                clearInputFields();
+                clearDataToTable();
+                loadDataToTable();
+                txtMaHang.setText(sanPhamDAO.getNextMaHang());
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm sản phẩm thất bại");
+            }
+        }
+	}
+	if (o.equals(btnXoa)) {
+        int selectedRow = tableSanPham.getSelectedRow();
+        if (selectedRow != -1) {
+            String maHang = (String) tableSanPham.getValueAt(selectedRow, 0);
+            if (deleteSanPhamFromDatabase(maHang)) {
+                JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
+                clearDataToTable();
+                loadDataToTable();
+                txtMaHang.setText(sanPhamDAO.getNextMaHang());
+            } else {
+                JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm để xóa");
+        }
+    }
+	if (o.equals(btnSua)) {
+        if (validateData()) {
+            SanPham sp = revertData();
+            if (updateSanPhamInDatabase(sp)) {
+                JOptionPane.showMessageDialog(this, "Cập nhật sản phẩm thành công");
+                clearInputFields();
+                clearDataToTable();
+                loadDataToTable();
+                txtMaHang.setText(sanPhamDAO.getNextMaHang());
+            } else {
+                JOptionPane.showMessageDialog(this, "Cập nhật sản phẩm thất bại");
+            }
+        }
+    }
+	if(o.equals(btnHuy)) {
+		clearInputFields();
+	}
+	if(o.equals(btnXuat)) {
+		exportToExcel();
+    }
 }
+
+
+
 
 private void showMessage(String message, JTextField txt) {
     txt.requestFocus();
@@ -368,11 +445,7 @@ private String getFormattedDate(JDateChooser dateChooser) {
      return "";
  }
 }
-//Tự động cập nhật mã hàng
-private String generateMaHang() {
-int size = dsSanPham.getList().size(); 
-return "SP" + (size + 1);
-}
+
 String maHang,tenHang,moTa,ngaySX; 
 Double donGia;
 int soLuong;
@@ -387,41 +460,175 @@ private SanPham revertData() {
 	return new SanPham(maHang, tenHang, moTa, donGia, soLuong, ngaySX);
 }
 
-public boolean validateData() {
-	 tenHang = txtTenHang.getText();
-	 moTa = txtMoTa.getText();
-	 String str_donGia = txtDonGia.getText();
-	 ngaySX = getFormattedDate(txtNgaySX);
-	 soLuong = Integer.parseInt(txtSoLuong.getValue().toString());
-	if (!(tenHang.length() > 0 && tenHang.matches("[a-zA-Z]+"))) {
-		showMessage("Error:Mã hàng không theo mẫu [a-zA-Z ]+", txtTenHang);
-		return false;
-	}
-	if (!(moTa.length() > 0 && moTa.matches("[a-zA-Z ]+"))) {
-        showMessage("Error:Mô tả không theo mẫu [a-zA-Z ]+", txtMoTa);
-        return false;
-	}
-	if (!(str_donGia.length() > 0 && str_donGia.matches("[0-9]+"))) {
-        showMessage("Error:Đơn giá phải là số", txtDonGia);
+
+
+private boolean validateData() {
+    tenHang = txtTenHang.getText();
+    moTa = txtMoTa.getText();
+    String str_donGia = txtDonGia.getText();
+    ngaySX = getFormattedDate(txtNgaySX);
+    soLuong = Integer.parseInt(txtSoLuong.getValue().toString());
+
+    // Regex to include Vietnamese characters
+    String vietnamesePattern = "^[\\p{L}\\s]+$";
+
+    if (tenHang.isEmpty()) {
+        showMessage("Error: Tên hàng không được để trống", txtTenHang);
         return false;
     }
-	if (!(soLuong > 0)) {
-         JOptionPane.showMessageDialog(this,"Số lượng phải lớn hơn 0");
+    if (!tenHang.matches(vietnamesePattern)) {
+        showMessage("Error: Tên hàng không theo mẫu [a-zA-Z\\p{L}\\s]+", txtTenHang);
         return false;
     }
-	return true;
+    if (moTa.isEmpty()) {
+        showMessage("Error: Mô tả không được để trống", txtMoTa);
+        return false;
+    }
+    if (!moTa.matches(vietnamesePattern)) {
+        showMessage("Error: Mô tả không theo mẫu [a-zA-Z\\p{L}\\s]+", txtMoTa);
+        return false;
+    }
+    if (str_donGia.isEmpty()) {
+        showMessage("Error: Đơn giá không được để trống", txtDonGia);
+        return false;
+    }
+    if (!str_donGia.matches("[0-9]+")) {
+        showMessage("Error: Đơn giá phải là số", txtDonGia);
+        return false;
+    }
+    if (soLuong <= 0) {
+        JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0");
+        return false;
+    }
+    return true;
 }
-private void addDataToTable() {
-	if (validateData()) {
-		SanPham sp = revertData();
-		if(dsSanPham.addSanPham(sp)){
-			txtMaHang.setText(generateMaHang());
-			DefaultTableModel model = (DefaultTableModel) tableSanPham.getModel();
-			model.addRow(new Object[] { sp.getMaHang(), sp.getTenHang(), sp.getMoTa(), sp.getDonGia(), sp.getSoLuong(),
-					sp.getNgaySX() });
-		}else{
-            JOptionPane.showMessageDialog(this,"Thêm sản phẩm thất bại");
+
+
+public boolean isMaHangDuplicate(String maHang) {
+    String sql = "SELECT COUNT(*) FROM DanhSachSanPham WHERE MaHang = ?";
+    try (Connection conn = ConnectDB.getConnection("DB_QLBH");
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setString(1, maHang);
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
         }
-	}
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
 }
+
+
+private boolean deleteSanPhamFromDatabase(String maHang) {
+    String sql = "DELETE FROM DanhSachSanPham WHERE MaHang = ?";
+    try (Connection conn = ConnectDB.getConnection("DB_QLBH");
+        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setString(1, maHang);
+        int rowsAffected = pstmt.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+   }
+private boolean addSanPhamToDatabase(SanPham sp) {
+    String sql = "INSERT INTO DanhSachSanPham (MaHang, TenHang, MoTa, DonGia, SoLuong, NgaySanXuat) VALUES (?, ?, ?, ?, ?, ?)";
+    try (Connection conn = ConnectDB.getConnection("DB_QLBH");
+        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setString(1, sp.getMaHang());
+        pstmt.setString(2, sp.getTenHang());
+        pstmt.setString(3, sp.getMoTa());
+        pstmt.setDouble(4, sp.getDonGia());
+        pstmt.setInt(5, sp.getSoLuong());
+        pstmt.setString(6, sp.getNgaySX());
+        int rowsAffected = pstmt.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+private void loadDataToTable() {
+    List<SanPham> sanPhamList = sanPhamDAO.getAllSanPham();
+    DefaultTableModel model = (DefaultTableModel) tableSanPham.getModel();
+    for (SanPham sp : sanPhamList) {
+        model.addRow(new Object[] { sp.getMaHang(), sp.getTenHang(), sp.getMoTa(), sp.getDonGia(), sp.getSoLuong(), sp.getNgaySX() });
+    }
+}
+
+private boolean updateSanPhamInDatabase(SanPham sp) {
+    String sql = "UPDATE DanhSachSanPham SET TenHang = ?, MoTa = ?, DonGia = ?, SoLuong = ?, NgaySanXuat = ? WHERE MaHang = ?";
+    try (Connection conn = ConnectDB.getConnection("DB_QLBH");
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setString(1, sp.getTenHang());
+        pstmt.setString(2, sp.getMoTa());
+        pstmt.setDouble(3, sp.getDonGia());
+        pstmt.setInt(4, sp.getSoLuong());
+        pstmt.setString(5, sp.getNgaySX());
+        pstmt.setString(6, sp.getMaHang());
+        int rowsAffected = pstmt.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+private void clearDataToTable() {
+    DefaultTableModel model = (DefaultTableModel) tableSanPham.getModel();
+    model.setRowCount(0);
+}
+private void clearInputFields() {
+    txtTenHang.setText("");
+    txtMoTa.setText("");
+    txtDonGia.setText("");
+    txtSoLuong.setValue(0);
+    txtNgaySX.setDate(null);
+}
+
+private void exportToExcel() {
+    Workbook workbook = new XSSFWorkbook();
+    Sheet sheet = workbook.createSheet("DanhSachSanPham");
+
+    // Create header row
+    Row headerRow = sheet.createRow(0);
+    String[] headers = {"Mã hàng", "Tên hàng", "Mô tả", "Đơn giá", "Số lượng", "Ngày sản xuất"};
+    for (int i = 0; i < headers.length; i++) {
+        Cell cell = headerRow.createCell(i);
+        cell.setCellValue(headers[i]);
+    }
+
+    // Populate data rows
+    List<SanPham> sanPhamList = sanPhamDAO.getAllSanPham();
+    int rowNum = 1;
+    for (SanPham sp : sanPhamList) {
+        Row row = sheet.createRow(rowNum++);
+        row.createCell(0).setCellValue(sp.getMaHang());
+        row.createCell(1).setCellValue(sp.getTenHang());
+        row.createCell(2).setCellValue(sp.getMoTa());
+        row.createCell(3).setCellValue(sp.getDonGia());
+        row.createCell(4).setCellValue(sp.getSoLuong());
+        row.createCell(5).setCellValue(sp.getNgaySX());
+    }
+
+    // Write the output to a file
+    try (FileOutputStream fileOut = new FileOutputStream("DanhSachSanPham.xlsx")) {
+        workbook.write(fileOut);
+        JOptionPane.showMessageDialog(this, "Xuất file Excel thành công");
+    } catch (IOException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Xuất file Excel thất bại");
+    } finally {
+        try {
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
 }
