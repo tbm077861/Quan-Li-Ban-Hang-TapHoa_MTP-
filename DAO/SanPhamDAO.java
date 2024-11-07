@@ -31,12 +31,14 @@ public class SanPhamDAO {
             return false;
         }
     }
-    public ArrayList<SanPham> getAllSanPham() {
-    	ArrayList<SanPham> sanPhamList = new ArrayList<>();
-        String sql = "SELECT * FROM DanhSachSanPham";
+    public List<SanPham> getAllSanPham() {
+    	List<SanPham> sanPhamList = new ArrayList<>();
+        String sql = "SELECT * FROM DanhSachSanPham ORDER BY MaHang";
+
         try (Connection conn = ConnectDB.getConnection("DB_QLBH");
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
+
             while (rs.next()) {
                 String maHang = rs.getString("MaHang");
                 String tenHang = rs.getString("TenHang");
@@ -44,14 +46,17 @@ public class SanPhamDAO {
                 double donGia = rs.getDouble("DonGia");
                 int soLuong = rs.getInt("SoLuong");
                 String ngaySX = rs.getString("NgaySanXuat");
+
                 SanPham sp = new SanPham(maHang, tenHang, moTa, donGia, soLuong, ngaySX);
                 sanPhamList.add(sp);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return sanPhamList;
     }
+ 
     public String getNextMaHang() {
         String sql = "SELECT TOP 1 MaHang FROM DanhSachSanPham ORDER BY MaHang DESC";
         try (Connection conn = ConnectDB.getConnection("DB_QLBH");

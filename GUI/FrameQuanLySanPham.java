@@ -49,7 +49,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class FrameQuanLySanPham extends JFrame implements ActionListener {
+public class FrameQuanLySanPham extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel pnlBackGround;
@@ -76,39 +76,54 @@ public class FrameQuanLySanPham extends JFrame implements ActionListener {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					FrameQuanLySanPham frame = new FrameQuanLySanPham();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					FrameQuanLySanPham frame = new FrameQuanLySanPham();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
 	 */
 	public FrameQuanLySanPham() {
-		setTitle("Quản lí sản phẩm\r\n");
-		setResizable(true);
-		setSize(1440,1024);
+//		setTitle("Quản lí sản phẩm\r\n");
+//		setResizable(true);
+//		setSize(1440,1024);
+//		
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		setLocationRelativeTo(null);
+//		pnlBackGround = new JPanel();
+//		pnlBackGround.setBackground(new Color(255, 187, 53));
+//		pnlBackGround.setBorder(new EmptyBorder(5, 5, 5, 5));
+//
+//		setContentPane(pnlBackGround);
+//		pnlBackGround.setLayout(null);
+//		
+//		JPanel panel = new JPanel();
+//		panel.setBounds(0, 221, 1586, 89);
+//		panel.setBackground(new Color(255, 128, 64));
+//		pnlBackGround.add(panel);
+//		panel.setLayout(null);
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
-		pnlBackGround = new JPanel();
-		pnlBackGround.setBackground(new Color(255, 187, 53));
-		pnlBackGround.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setLayout(null);
 
-		setContentPane(pnlBackGround);
+		pnlBackGround = new JPanel();
+		pnlBackGround.setBounds(0, 0, 1540, 755);
+		pnlBackGround.setBackground(new Color(254, 222, 192));
+		pnlBackGround.setBorder(new EmptyBorder(5, 5, 5, 5));
+		add(pnlBackGround);
 		pnlBackGround.setLayout(null);
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(0, 221, 1586, 89);
-		panel.setBackground(new Color(255, 128, 64));
+		panel.setBackground(new Color(242, 132, 123));
 		pnlBackGround.add(panel);
 		panel.setLayout(null);
 		
@@ -183,7 +198,6 @@ public class FrameQuanLySanPham extends JFrame implements ActionListener {
 		pnlBackGround.add(lblNgaySX);
 		
 		txtMaHang = new JTextField();
-		txtMaHang.setEditable(false);
 		txtMaHang.setBounds(155, 40, 229, 30);
 		pnlBackGround.add(txtMaHang);
 		txtMaHang.setColumns(10);
@@ -332,7 +346,7 @@ public class FrameQuanLySanPham extends JFrame implements ActionListener {
 //		 gd.setFullScreenWindow(this);
 		
 		//Khởi tạo danh sách
-		txtMaHang.setText(sanPhamDAO.getNextMaHang());
+//		txtMaHang.setText(sanPhamDAO.getNextMaHang());
 		txtTenHang.requestFocus();
 		txtTenHang.selectAll();
 		loadDataToTable();
@@ -383,7 +397,7 @@ public void actionPerformed(ActionEvent e) {
                 clearInputFields();
                 clearDataToTable();
                 loadDataToTable();
-                txtMaHang.setText(sanPhamDAO.getNextMaHang());
+//                txtMaHang.setText(sanPhamDAO.getNextMaHang());
             } else {
                 JOptionPane.showMessageDialog(this, "Thêm sản phẩm thất bại");
             }
@@ -397,7 +411,7 @@ public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
                 clearDataToTable();
                 loadDataToTable();
-                txtMaHang.setText(sanPhamDAO.getNextMaHang());
+//                txtMaHang.setText(sanPhamDAO.getNextMaHang());
             } else {
                 JOptionPane.showMessageDialog(this, "Xóa sản phẩm thất bại");
             }
@@ -413,7 +427,7 @@ public void actionPerformed(ActionEvent e) {
                 clearInputFields();
                 clearDataToTable();
                 loadDataToTable();
-                txtMaHang.setText(sanPhamDAO.getNextMaHang());
+//                txtMaHang.setText(sanPhamDAO.getNextMaHang());
             } else {
                 JOptionPane.showMessageDialog(this, "Cập nhật sản phẩm thất bại");
             }
@@ -463,6 +477,7 @@ private SanPham revertData() {
 
 
 private boolean validateData() {
+	maHang = txtMaHang.getText();
     tenHang = txtTenHang.getText();
     moTa = txtMoTa.getText();
     String str_donGia = txtDonGia.getText();
@@ -471,7 +486,15 @@ private boolean validateData() {
 
     // Regex to include Vietnamese characters
     String vietnamesePattern = "^[\\p{L}\\s]+$";
-
+    String reg_mahang = "SP\\d";
+    if (maHang.isEmpty()) {
+        showMessage("Error: Mã hàng không được để trống", txtMaHang);
+        return false;
+    }
+    if (!maHang.matches(reg_mahang)) {
+        showMessage("Error: Mã hàng không theo mẫu SP? ", txtTenHang);
+        return false;
+    }
     if (tenHang.isEmpty()) {
         showMessage("Error: Tên hàng không được để trống", txtTenHang);
         return false;
@@ -582,6 +605,7 @@ private void clearDataToTable() {
     model.setRowCount(0);
 }
 private void clearInputFields() {
+	txtMaHang.setText("");
     txtTenHang.setText("");
     txtMoTa.setText("");
     txtDonGia.setText("");
