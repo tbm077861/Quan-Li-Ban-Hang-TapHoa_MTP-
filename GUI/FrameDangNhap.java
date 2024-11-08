@@ -12,6 +12,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,7 +34,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
-import connectDB.ConnectDB;
+import connect.ConnectDB;
 
 public class FrameDangNhap extends JFrame {
     private JLabel lblTitle;
@@ -118,6 +120,14 @@ public class FrameDangNhap extends JFrame {
 
         txtMaNV = new JTextField(15);
         txtMatKhau = new JPasswordField(15);
+        txtMaNV.addKeyListener(new KeyAdapter() {
+		    @Override
+		    public void keyReleased(KeyEvent e) {
+		        String text = txtMaNV.getText();
+		        txtMaNV.setText(text.toUpperCase());
+		    }
+		});
+        
         cboChucVu = new JComboBox<>(new String[]{"Nhân Viên", "Quản Lý"});
         Font inputFont = new Font("Arial", Font.PLAIN, 14);
         txtMaNV.setFont(inputFont);
