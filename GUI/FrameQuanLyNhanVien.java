@@ -4,11 +4,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +36,8 @@ import javax.swing.table.JTableHeader;
 
 import com.toedter.calendar.JDateChooser;
 
-import connectDB.ConnectDB;
+import DAO.NhanVienDAO;
+import connect.ConnectDB;
 
 public class FrameQuanLyNhanVien extends JPanel {
 
@@ -54,33 +56,18 @@ public class FrameQuanLyNhanVien extends JPanel {
 	private DefaultTableModel tableModel;
 	private JTextField txtMatKhau;
 	private boolean isEditing = false;
+	private NhanVienDAO nhanVienDAO = new NhanVienDAO();
 
-// Cập nhật dữ liệu vào table
+	// Cập nhật dữ liệu vào table
 	private void loadDataToTable() {
+		List<Object[]> data = nhanVienDAO.loadDataToTable();
 		tableModel = (DefaultTableModel) tableNhanVien.getModel();
 		tableModel.setRowCount(0);
-
-		try (Connection conn = ConnectDB.getConnection("DB_QLBH");
-				PreparedStatement stmt = conn.prepareStatement(
-						"SELECT MANV, HoTen, GioiTinh, Email, NgaySinh, CCCD, MatKhau, ChucVu FROM TaiKhoanNV")) {
-
-			ResultSet rs = stmt.executeQuery();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-			while (rs.next()) {
-				// Chuyển đổi ngày sinh từ cơ sở dữ liệu sang định dạng yyyy-MM-dd
-				String ngaySinh = sdf.format(rs.getDate("NgaySinh"));
-
-				Object[] row = { rs.getString("MANV"), rs.getString("HoTen"), rs.getString("GioiTinh"),
-						rs.getString("Email"), ngaySinh, rs.getString("CCCD"), rs.getString("MatKhau"),
-						rs.getString("ChucVu") };
-				tableModel.addRow(row);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu: " + e.getMessage());
+		for (Object[] row : data) {
+			tableModel.addRow(row);
 		}
 	}
+
 
 	public class KiemTraNhap {
 		public static String validateID(String id) {
@@ -157,158 +144,92 @@ public class FrameQuanLyNhanVien extends JPanel {
 		}
 	}
 
-	private boolean isDuplicateCCCD(String cccd) {
-		try (Connection conn = ConnectDB.getConnection("DB_QLBH");
-				PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*) FROM TaiKhoanNV WHERE CCCD = ?")) {
-			pstmt.setString(1, cccd);
-			ResultSet rs = pstmt.executeQuery();
-			if (rs.next()) {
-				return rs.getInt(1) > 0;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Lỗi khi kiểm tra CCCD: " + e.getMessage());
-		}
-		return false;
-	}
+   private boolean isDuplicateCCCD(String cccd) {
+       return nhanVienDAO.isDuplicateCCCD(cccd);
+   }
 
-	private boolean isDuplicateEmail(String email) {
-		try (Connection conn = ConnectDB.getConnection("DB_QLBH");
-				PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*) FROM TaiKhoanNV WHERE Email = ?")) {
-			pstmt.setString(1, email);
-			ResultSet rs = pstmt.executeQuery();
-			if (rs.next()) {
-				return rs.getInt(1) > 0;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Lỗi khi kiểm tra Email: " + e.getMessage());
-		}
-		return false;
-	}
 
-// Sự kiện nút Lưu
+   private boolean isDuplicateEmail(String email) {
+       return nhanVienDAO.isDuplicateEmail(email);
+   }
 
-	private void btnLuuActionPerformed() {
-		String maNV = txtMaNhanVien.getText().trim();
-		String hoTen = txtTenNhanVien.getText().trim();
-		String email = txtEmailNhanVien.getText().trim();
-		String cccd = txtCanCuoc.getText().trim();
-		String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
-		String matKhau = txtMatKhau.getText().trim();
-		String chucVu = txtChucVu.getSelectedItem().toString();
 
-		String error;
+   // Sự kiện nút Lưu
 
-		error = KiemTraNhap.validateID(maNV);
-		if (error != null) {
-			JOptionPane.showMessageDialog(this, "Error: " + error);
-			txtMaNhanVien.requestFocus();
-			return;
-		}
+   private void btnLuuActionPerformed() {
+	   String maNV = txtMaNhanVien.getText().trim();
+       String hoTen = txtTenNhanVien.getText().trim();
+       String email = txtEmailNhanVien.getText().trim();
+       String cccd = txtCanCuoc.getText().trim();
+       String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
+       String matKhau = txtMatKhau.getText().trim();
+       String chucVu = txtChucVu.getSelectedItem().toString();
 
-		error = KiemTraNhap.validateName(hoTen);
-		if (error != null) {
-			JOptionPane.showMessageDialog(this, "Error: " + error);
-			txtTenNhanVien.requestFocus();
-			return;
-		}
+       String error;
 
-		error = KiemTraNhap.validateEmail(email);
-		if (error != null) {
-			JOptionPane.showMessageDialog(this, "Error: " + error);
-			txtEmailNhanVien.requestFocus();
-			return;
-		}
+       error = KiemTraNhap.validateID(maNV);
+       if (error != null) {
+           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+           txtMaNhanVien.requestFocus();
+           return;
+       }
 
-		error = KiemTraNhap.validateCCCD(cccd);
-		if (error != null) {
-			JOptionPane.showMessageDialog(this, "Error: " + error);
-			txtCanCuoc.requestFocus();
-			return;
-		}
+       error = KiemTraNhap.validateName(hoTen);
+       if (error != null) {
+           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+           txtTenNhanVien.requestFocus();
+           return;
+       }
 
-		error = KiemTraNhap.validatePassword(matKhau);
-		if (error != null) {
-			JOptionPane.showMessageDialog(this, "Error: " + error);
-			txtMatKhau.requestFocus();
-			return;
-		}
+       error = KiemTraNhap.validateEmail(email);
+       if (error != null) {
+           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+           txtEmailNhanVien.requestFocus();
+           return;
+       }
 
-		if (!isEditing && isDuplicateCCCD(cccd)) {
-			JOptionPane.showMessageDialog(this, "Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
-			txtCanCuoc.requestFocus();
-			return;
-		}
+       error = KiemTraNhap.validateCCCD(cccd);
+       if (error != null) {
+           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+           txtCanCuoc.requestFocus();
+           return;
+       }
 
-		if (!isEditing && isDuplicateEmail(email)) {
-			JOptionPane.showMessageDialog(this, "Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
-			txtEmailNhanVien.requestFocus();
-			return;
-		}
+       error = KiemTraNhap.validatePassword(matKhau);
+       if (error != null) {
+           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+           txtMatKhau.requestFocus();
+           return;
+       }
 
-		Date ngaySinh = txtNgaySinhNhanVien.getDate();
-		if (ngaySinh == null) {
-			JOptionPane.showMessageDialog(this, "Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
-			txtNgaySinhNhanVien.requestFocus();
-			return;
-		}
+       if (isDuplicateCCCD(cccd)) {
+           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+           txtCanCuoc.requestFocus();
+           return;
+       }
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String ngaySinhStr = sdf.format(ngaySinh);
+       if (isDuplicateEmail(email)) {
+           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+           txtEmailNhanVien.requestFocus();
+           return;
+       }
 
-		try (Connection conn = ConnectDB.getConnection("DB_QLBH")) {
-			String sql;
-			if (isEditing) {
-				sql = "UPDATE TaiKhoanNV SET HoTen=?, NgaySinh=?, Email=?, GioiTinh=?, CCCD=?, MatKhau=?, ChucVu=? WHERE MANV=?";
-			} else {
-				sql = "INSERT INTO TaiKhoanNV (MANV, HoTen, NgaySinh, Email, GioiTinh, CCCD, MatKhau, ChucVu) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-			}
+       Date ngaySinh = txtNgaySinhNhanVien.getDate();
+       if (ngaySinh == null) {
+           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
+           txtNgaySinhNhanVien.requestFocus();
+           return;
+       }
 
-			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-				if (isEditing) {
-					pstmt.setString(1, hoTen);
-					pstmt.setString(2, ngaySinhStr);
-					pstmt.setString(3, email);
-					pstmt.setString(4, gioiTinh);
-					pstmt.setString(5, cccd);
-					pstmt.setString(6, matKhau);
-					pstmt.setString(7, chucVu);
-					pstmt.setString(8, maNV);
-				} else {
-					maNV = generateMaNV(conn);
-					pstmt.setString(1, maNV);
-					pstmt.setString(2, hoTen);
-					pstmt.setString(3, ngaySinhStr);
-					pstmt.setString(4, email);
-					pstmt.setString(5, gioiTinh);
-					pstmt.setString(6, cccd);
-					pstmt.setString(7, matKhau);
-					pstmt.setString(8, chucVu);
-				}
+       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+       String ngaySinhStr = sdf.format(ngaySinh);
 
-				pstmt.executeUpdate();
-				JOptionPane.showMessageDialog(this, isEditing ? "Cập nhật thành công!" : "Thêm mới thành công!");
-				loadDataToTable();
-				clearFields();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
-		}
-	}
+       nhanVienDAO.saveNhanVien(false, maNV, hoTen, ngaySinhStr, email, gioiTinh, cccd, matKhau, chucVu);
+       loadDataToTable();
+       clearFields();
+   }
 
-	private String generateMaNV(Connection conn) throws SQLException {
-		try (Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT TOP 1 MANV FROM TaiKhoanNV ORDER BY MANV DESC")) {
-			if (rs.next()) {
-				String lastMaNV = rs.getString("MANV");
-				int num = Integer.parseInt(lastMaNV.substring(2)) + 1;
-				return String.format("NV%d", num);
-			}
-			return "NV1";
-		}
-	}
+
 
 // Sự kiện nút Sửa
 	private void btnSuaActionPerformed() {
@@ -318,106 +239,111 @@ public class FrameQuanLyNhanVien extends JPanel {
 			return;
 		}
 
-		isEditing = true;
-		txtMaNhanVien.setEditable(false);
+		String maNV = txtMaNhanVien.getText().trim();
+        String hoTen = txtTenNhanVien.getText().trim();
+        String email = txtEmailNhanVien.getText().trim();
+        String cccd = txtCanCuoc.getText().trim();
+        String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
+        String matKhau = txtMatKhau.getText().trim();
+        String chucVu = txtChucVu.getSelectedItem().toString();
 
-		// Load dữ liệu từ bảng vào form
-		txtMaNhanVien.setText(tableModel.getValueAt(selectedRow, 0).toString());
-		txtTenNhanVien.setText(tableModel.getValueAt(selectedRow, 1).toString());
-		txtGioiTinhTim.setSelectedItem(tableModel.getValueAt(selectedRow, 2));
-		txtEmailNhanVien.setText(tableModel.getValueAt(selectedRow, 3).toString());
-		txtCanCuoc.setText(tableModel.getValueAt(selectedRow, 5).toString());
-		txtMatKhau.setText(tableModel.getValueAt(selectedRow, 6).toString());
-		txtChucVu.setSelectedItem(tableModel.getValueAt(selectedRow, 7));
+        String error;
 
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			Date ngaySinh = sdf.parse(tableModel.getValueAt(selectedRow, 4).toString());
-			txtNgaySinhNhanVien.setDate(ngaySinh);
-		} catch (Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Lỗi định dạng ngày sinh!");
-		}
+        error = KiemTraNhap.validateID(maNV);
+        if (error != null) {
+            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+            txtMaNhanVien.requestFocus();
+            return;
+        }
+
+        error = KiemTraNhap.validateName(hoTen);
+        if (error != null) {
+            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+            txtTenNhanVien.requestFocus();
+            return;
+        }
+
+        error = KiemTraNhap.validateEmail(email);
+        if (error != null) {
+            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+            txtEmailNhanVien.requestFocus();
+            return;
+        }
+
+        error = KiemTraNhap.validateCCCD(cccd);
+        if (error != null) {
+            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+            txtCanCuoc.requestFocus();
+            return;
+        }
+
+        error = KiemTraNhap.validatePassword(matKhau);
+        if (error != null) {
+            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+            txtMatKhau.requestFocus();
+            return;
+        }
+
+        if (nhanVienDAO.isDuplicateCCCD(cccd) && !nhanVienDAO.isSameCCCD(maNV, cccd)) {
+            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+            txtCanCuoc.requestFocus();
+            return;
+        }
+
+        if (nhanVienDAO.isDuplicateEmail(email) && !nhanVienDAO.isSameEmail(maNV, email)) {
+            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+            txtEmailNhanVien.requestFocus();
+            return;
+        }
+
+        Date ngaySinh = txtNgaySinhNhanVien.getDate();
+        if (ngaySinh == null) {
+            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
+            txtNgaySinhNhanVien.requestFocus();
+            return;
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String ngaySinhStr = sdf.format(ngaySinh);
+
+        nhanVienDAO.saveNhanVien(true, maNV, hoTen, ngaySinhStr, email, gioiTinh, cccd, matKhau, chucVu);
+        loadDataToTable();
+        clearFields();
 	}
 
-// Sự kiện nút Xóa
-	private void btnXoaActionPerformed() {
-		int selectedRow = tableNhanVien.getSelectedRow();
-		if (selectedRow < 0) {
-			JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần xóa!");
-			return;
-		}
+	// Sự kiện nút Xóa
+   private void btnXoaActionPerformed() {
+       int selectedRow = tableNhanVien.getSelectedRow();
+       if (selectedRow < 0) {
+           JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần xóa!");
+           return;
+       }
 
-		int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa nhân viên này?", "Xác nhận xóa",
-				JOptionPane.YES_NO_OPTION);
+       int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa nhân viên này?", "Xác nhận xóa",
+               JOptionPane.YES_NO_OPTION);
 
-		if (confirm == JOptionPane.YES_OPTION) {
-			String maNV = tableModel.getValueAt(selectedRow, 0).toString();
+       if (confirm == JOptionPane.YES_OPTION) {
+           String maNV = tableModel.getValueAt(selectedRow, 0).toString();
+           nhanVienDAO.deleteNhanVien(maNV);
+           loadDataToTable();
+           clearFields();
+       }
+   }
 
-			try (Connection conn = ConnectDB.getConnection("DB_QLBH");
-					PreparedStatement pstmt = conn.prepareStatement("DELETE FROM TaiKhoanNV WHERE MANV = ?")) {
+   // Sự kiện nút Tìm kiếm
 
-				pstmt.setString(1, maNV);
-				pstmt.executeUpdate();
+   private void btnTimActionPerformed() {
+       String maNV = txtMaNhanVienTim.getText().trim();
+       String hoTen = txtTenNhanVienTim.getText().trim();
+       String cccd = txtCanCuocTim.getText().trim();
+       String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
 
-				JOptionPane.showMessageDialog(this, "Xóa thành công!");
-				loadDataToTable();
-				clearFields();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(this, "Lỗi khi xóa: " + e.getMessage());
-			}
-		}
-	}
-
-// Sự kiện nút Tìm kiếm
-	private void btnTimActionPerformed() {
-		String maNV = txtMaNhanVienTim.getText().trim();
-		String hoTen = txtTenNhanVienTim.getText().trim();
-		String cccd = txtCanCuocTim.getText().trim();
-		String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
-
-		StringBuilder sql = new StringBuilder(
-				"SELECT MANV, HoTen, GioiTinh, Email, NgaySinh, CCCD FROM TaiKhoanNV WHERE 1=1");
-		List<Object> params = new ArrayList<>();
-
-		if (!maNV.isEmpty()) {
-			sql.append(" AND MANV LIKE ?");
-			params.add("%" + maNV + "%");
-		}
-		if (!hoTen.isEmpty()) {
-			sql.append(" AND HoTen LIKE ?");
-			params.add("%" + hoTen + "%");
-		}
-		if (!cccd.isEmpty()) {
-			sql.append(" AND CCCD LIKE ?");
-			params.add("%" + cccd + "%");
-		}
-		if (!gioiTinh.isEmpty()) {
-			sql.append(" AND GioiTinh = ?");
-			params.add(gioiTinh);
-		}
-
-		try (Connection conn = ConnectDB.getConnection("DB_QLBH");
-				PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
-
-			for (int i = 0; i < params.size(); i++) {
-				pstmt.setObject(i + 1, params.get(i));
-			}
-
-			ResultSet rs = pstmt.executeQuery();
-			tableModel.setRowCount(0);
-
-			while (rs.next()) {
-				Object[] row = { rs.getString("MANV"), rs.getString("HoTen"), rs.getString("GioiTinh"),
-						rs.getString("Email"), rs.getString("NgaySinh"), rs.getString("CCCD") };
-				tableModel.addRow(row);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm: " + e.getMessage());
-		}
-	}
+       List<Object[]> data = nhanVienDAO.searchNhanVien(maNV, hoTen, cccd, gioiTinh);
+       tableModel.setRowCount(0);
+       for (Object[] row : data) {
+           tableModel.addRow(row);
+       }
+   }
 
 // Sự kiện nút Tải lại
 	private void btnTaiLaiActionPerformed() {
@@ -482,7 +408,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		panel.setLayout(null);
 
 		JButton btnSa = new JButton("Sửa");
-		btnSa.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\icon\\edit.png"));
+		btnSa.setIcon(new ImageIcon("icon\\btnSua.png"));
 		btnSa.setForeground(new Color(0, 0, 0));
 		btnSa.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnSa.setBackground(new Color(167, 62, 20));
@@ -490,7 +416,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		panel.add(btnSa);
 
 		JButton btnXa = new JButton("Xóa");
-		btnXa.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\icon\\delete.png"));
+		btnXa.setIcon(new ImageIcon("icon\\btnXoa.png"));
 		btnXa.setForeground(new Color(0, 0, 0));
 		btnXa.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnXa.setBackground(new Color(167, 62, 20));
@@ -498,7 +424,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		panel.add(btnXa);
 
 		JButton btnHy = new JButton("Hủy");
-		btnHy.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\icon\\cancel.png"));
+		btnHy.setIcon(new ImageIcon("icon\\btnXoa.png"));
 		btnHy.setForeground(new Color(0, 0, 0));
 		btnHy.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnHy.setBackground(new Color(167, 62, 20));
@@ -506,7 +432,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		panel.add(btnHy);
 
 		JButton btnXuat = new JButton("Xuất");
-		btnXuat.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\icon\\xuat.png"));
+		btnXuat.setIcon(new ImageIcon("icon\\btnprint.png"));
 		btnXuat.setForeground(new Color(0, 0, 0));
 		btnXuat.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnXuat.setBackground(new Color(167, 62, 20));
@@ -516,7 +442,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		JButton btnLu = new JButton("Thêm");
 		btnLu.setBounds(61, 13, 177, 65);
 		panel.add(btnLu);
-		btnLu.setIcon(new ImageIcon("F:\\iuh 22-26\\HK5\\Huong su kien Java\\BTTH\\BTL_QuanLyBanHang\\icon\\add.png"));
+		btnLu.setIcon(new ImageIcon("icon\\btnThem.png"));
 		btnLu.setForeground(new Color(0, 0, 0));
 		btnLu.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnLu.setBackground(new Color(167, 62, 20));
@@ -563,21 +489,36 @@ public class FrameQuanLyNhanVien extends JPanel {
 		pnlBackGround.add(lblMatKhau);
 
 		txtMaNhanVien = new JTextField();
+		txtMaNhanVien.setFont(new Font("Dialog", Font.PLAIN, 18));
 		txtMaNhanVien.setBounds(225, 31, 317, 43);
 		pnlBackGround.add(txtMaNhanVien);
 		txtMaNhanVien.setColumns(10);
+		//Auto uppercase
 
+		txtMaNhanVien.addKeyListener(new KeyAdapter() {
+		    @Override
+		    public void keyReleased(KeyEvent e) {
+		        String text = txtMaNhanVien.getText();
+		        txtMaNhanVien.setText(text.toUpperCase());
+		    }
+		});
+
+		
+		
 		txtTenNhanVien = new JTextField();
+		txtTenNhanVien.setFont(new Font("Dialog", Font.PLAIN, 18));
 		txtTenNhanVien.setColumns(10);
 		txtTenNhanVien.setBounds(225, 86, 317, 43);
 		pnlBackGround.add(txtTenNhanVien);
 
 		txtCanCuoc = new JTextField();
+		txtCanCuoc.setFont(new Font("Dialog", Font.PLAIN, 18));
 		txtCanCuoc.setColumns(10);
 		txtCanCuoc.setBounds(225, 151, 317, 43);
 		pnlBackGround.add(txtCanCuoc);
 
 		txtEmailNhanVien = new JTextField();
+		txtEmailNhanVien.setFont(new Font("Dialog", Font.PLAIN, 18));
 		txtEmailNhanVien.setColumns(10);
 		txtEmailNhanVien.setBounds(800, 90, 259, 43);
 		pnlBackGround.add(txtEmailNhanVien);
@@ -587,10 +528,11 @@ public class FrameQuanLyNhanVien extends JPanel {
 																									// "Nhân viên" cho
 																									// rõ nghĩa
 		txtChucVu.setBounds(800, 218, 259, 43);
-		txtChucVu.setFont(new Font("Tahoma", Font.PLAIN, 16)); //
+		txtChucVu.setFont(new Font("Dialog", Font.PLAIN, 18)); //
 		pnlBackGround.add(txtChucVu);
 
 		txtMatKhau = new JTextField();
+		txtMatKhau.setFont(new Font("Dialog", Font.PLAIN, 18));
 		txtMatKhau.setColumns(10);
 		txtMatKhau.setBounds(800, 158, 259, 43);
 		pnlBackGround.add(txtMatKhau);
@@ -599,10 +541,10 @@ public class FrameQuanLyNhanVien extends JPanel {
 		txtNgaySinhNhanVien.setDateFormatString("yyyy-MM-dd");
 		txtNgaySinhNhanVien.setBounds(225, 216, 317, 40);
 		pnlBackGround.add(txtNgaySinhNhanVien);
+		txtNgaySinhNhanVien.getDateEditor().getUiComponent().setFont(new Font("Dialog", Font.PLAIN, 18));
 
 		JLabel logoMTP = new JLabel("");
-		logoMTP.setIcon(new ImageIcon(
-				"C:\\Users\\Admin\\Desktop\\WorkSpace\\Java_Workspace\\Nam3\\MTP\\mtp\\image\\logoMTP 1.png"));
+		logoMTP.setIcon(new ImageIcon("C:\\Users\\Admin\\Desktop\\WorkSpace\\Java_Workspace\\Nam3\\MTP\\mtp\\image\\logoMTP 1.png"));
 		logoMTP.setBounds(1052, 10, 360, 214);
 		pnlBackGround.add(logoMTP);
 
@@ -637,7 +579,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 			tableNhanVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 		}
 		txtGioiTinhTim = new JComboBox();
-		txtGioiTinhTim.setFont(new Font("Tahoma", Font.BOLD, 16));
+		txtGioiTinhTim.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtGioiTinhTim.setModel(new DefaultComboBoxModel(new String[] { "Nam", "Nữ" }));
 		txtGioiTinhTim.setBounds(800, 27, 148, 36);
 		pnlBackGround.add(txtGioiTinhTim);
@@ -707,12 +649,37 @@ public class FrameQuanLyNhanVien extends JPanel {
 		btnTaiLai_1_1.setFont(new Font("Tahoma", Font.BOLD, 15));
 		btnTaiLai_1_1.setBounds(206, 287, 115, 40);
 		pnlTacVu.add(btnTaiLai_1_1);
+
+		btnHy.addActionListener(e -> clearFields());
 		btnSa.addActionListener(e -> btnSuaActionPerformed());
 		btnXa.addActionListener(e -> btnXoaActionPerformed());
 		btnTim.addActionListener(e -> btnTimActionPerformed());
 		btnTaiLai_1_1.addActionListener(e -> btnTaiLaiActionPerformed());
-
+		
+		tableNhanVien.addMouseListener(new java.awt.event.MouseAdapter() {
+		    @Override
+		    public void mouseClicked(java.awt.event.MouseEvent evt) {
+		        int selectedRow = tableNhanVien.getSelectedRow();
+		        if (selectedRow >= 0) {
+		            txtMaNhanVien.setText(tableModel.getValueAt(selectedRow, 0).toString());
+		            txtTenNhanVien.setText(tableModel.getValueAt(selectedRow, 1).toString());
+		            txtGioiTinhTim.setSelectedItem(tableModel.getValueAt(selectedRow, 2).toString());
+		            txtEmailNhanVien.setText(tableModel.getValueAt(selectedRow, 3).toString());
+		            try {
+		                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		                Date ngaySinh = sdf.parse(tableModel.getValueAt(selectedRow, 4).toString());
+		                txtNgaySinhNhanVien.setDate(ngaySinh);
+		            } catch (Exception e) {
+		                e.printStackTrace();
+		                JOptionPane.showMessageDialog(null, "Lỗi định dạng ngày sinh!");
+		            }
+		            txtCanCuoc.setText(tableModel.getValueAt(selectedRow, 5).toString());
+		            txtMatKhau.setText(tableModel.getValueAt(selectedRow, 6).toString());
+		            txtChucVu.setSelectedItem(tableModel.getValueAt(selectedRow, 7).toString());
+		        }
+		    }
+		});
 		// Load dữ liệu ban đầu
-		loadDataToTable();
+//		loadDataToTable();
 	}
 }
