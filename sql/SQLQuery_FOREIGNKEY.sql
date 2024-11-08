@@ -1,12 +1,11 @@
 USE [DB_QLBH]
 GO
 
--- Drop existing foreign key on ChiTietHD if it exists
+-- 1. First drop existing foreign keys if they exist
 IF EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ChiTietHD_DanhSachSanPham]') AND parent_object_id = OBJECT_ID(N'[dbo].[ChiTietHD]'))
     ALTER TABLE [dbo].[ChiTietHD] DROP CONSTRAINT [FK_ChiTietHD_DanhSachSanPham]
 GO
 
--- Drop existing foreign keys on HoaDon if they exist
 IF EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_HoaDon_TaiKhoanNV]') AND parent_object_id = OBJECT_ID(N'[dbo].[HoaDon]'))
     ALTER TABLE [dbo].[HoaDon] DROP CONSTRAINT [FK_HoaDon_TaiKhoanNV]
 GO
@@ -15,10 +14,22 @@ IF EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[F
     ALTER TABLE [dbo].[HoaDon] DROP CONSTRAINT [FK_HoaDon_KhachHang]
 GO
 
--- Drop existing foreign key on ChiTietHD for HoaDon if it exists
 IF EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ChiTietHD_HoaDon]') AND parent_object_id = OBJECT_ID(N'[dbo].[ChiTietHD]'))
     ALTER TABLE [dbo].[ChiTietHD] DROP CONSTRAINT [FK_ChiTietHD_HoaDon]
 GO
+
+-- 2. Drop and recreate primary keys
+-- Drop existing primary key on HoaDon
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PK_HoaDon]') AND type = 'PK')
+    ALTER TABLE [dbo].[HoaDon] DROP CONSTRAINT [PK_HoaDon]
+GO
+
+-- Recreate primary key on HoaDon with just MaHD
+ALTER TABLE [dbo].[HoaDon]
+ADD CONSTRAINT [PK_HoaDon] PRIMARY KEY CLUSTERED ([MaHD])
+GO
+
+-- 3. Now add all foreign key constraints
 
 -- Add Foreign Key for ChiTietHD.MaHang -> DanhSachSanPham.MaHang
 ALTER TABLE [dbo].[ChiTietHD] 
