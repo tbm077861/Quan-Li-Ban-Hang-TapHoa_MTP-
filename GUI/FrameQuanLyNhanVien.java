@@ -29,13 +29,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import com.toedter.calendar.JDateChooser;
-import java.awt.Dialog.ModalExclusionType;
 
 public class FrameQuanLyNhanVien extends JFrame {
 
@@ -92,41 +93,80 @@ private void loadDataToTable() {
 
 
 
+
+
 public class KiemTraNhap {
-    public static boolean isValidID(String id) {
+    public static String validateID(String id) {
+        if (id == null || id.isEmpty()) {
+            return "Mã nhân viên không được để trống!";
+        }
         String idRegex = "^NV\\d+$";
-        return Pattern.matches(idRegex, id);
+        if (!Pattern.matches(idRegex, id)) {
+            return "Mã nhân viên không hợp lệ! Mã nhân viên phải bắt đầu bằng 'NV' và theo sau là các chữ số.";
+        }
+        return null;
     }
 
-    public static boolean isValidCCCD(String cccd) {
+    public static String validateCCCD(String cccd) {
+        if (cccd == null || cccd.isEmpty()) {
+            return "Căn cước không được để trống!";
+        }
         String cccdRegex = "^\\d{12}$";
-        return Pattern.matches(cccdRegex, cccd);
-    } 
-    
-    public static boolean isValidPhone(String phone) {
+        if (!Pattern.matches(cccdRegex, cccd)) {
+            return "Căn cước không hợp lệ! Căn cước phải là chuỗi gồm 12 chữ số.";
+        }
+        return null;
+    }
+
+    public static String validatePhone(String phone) {
+        if (phone == null || phone.isEmpty()) {
+            return "Số điện thoại không được để trống!";
+        }
         String phoneRegex = "^\\d{10}$";
-        return Pattern.matches(phoneRegex, phone);
+        if (!Pattern.matches(phoneRegex, phone)) {
+            return "Số điện thoại không hợp lệ! Số điện thoại phải là chuỗi gồm 10 chữ số.";
+        }
+        return null;
     }
 
-    public static boolean isValidDate(String date) {
+    public static String validateDate(String date) {
+        if (date == null || date.isEmpty()) {
+            return "Ngày không được để trống!";
+        }
         String dateRegex = "^\\d{4}-\\d{2}-\\d{2}$";
-        return Pattern.matches(dateRegex, date);
+        if (!Pattern.matches(dateRegex, date)) {
+            return "Ngày không hợp lệ! Ngày phải theo định dạng yyyy-MM-dd.";
+        }
+        return null;
     }
 
-    public static boolean isValidName(String name) {
+    public static String validateName(String name) {
+        if (name == null || name.isEmpty()) {
+            return "Họ và tên không được để trống!";
+        }
         String nameRegex = "^[\\p{L} ]+$";
-        return Pattern.matches(nameRegex, name);
+        if (!Pattern.matches(nameRegex, name)) {
+            return "Họ và tên không hợp lệ! Họ và tên chỉ được chứa các ký tự chữ cái và khoảng trắng.";
+        }
+        return null;
     }
 
-    public static boolean isValidPassword(String password) {
-        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$";
-//        return Pattern.matches(passwordRegex, password);
-        return true;
+    public static String validatePassword(String password) {
+        if (password == null || password.isEmpty()) {
+            return "Mật khẩu không được để trống!";
+        }
+        return null;
     }
 
-    public static boolean isValidEmail(String email) {
+    public static String validateEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            return "Email không được để trống!";
+        }
         String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
-        return Pattern.matches(emailRegex, email);
+        if (!Pattern.matches(emailRegex, email)) {
+            return "Email không hợp lệ! Vui lòng nhập đúng định dạng email.";
+        }
+        return null;
     }
 }
 
@@ -146,7 +186,25 @@ private boolean isDuplicateCCCD(String cccd) {
     return false;
 }
 
+private boolean isDuplicateEmail(String email) {
+    try (Connection conn = ConnectDB.getConnection("DB_QLBH");
+         PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*) FROM TaiKhoanNV WHERE Email = ?")) {
+        pstmt.setString(1, email);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Lỗi khi kiểm tra Email: " + e.getMessage());
+    }
+    return false;
+}
+
+
 // Sự kiện nút Lưu
+
+
 
 private void btnLuuActionPerformed() {
     String maNV = txtMaNhanVien.getText().trim();
@@ -157,41 +215,58 @@ private void btnLuuActionPerformed() {
     String matKhau = txtMatKhau.getText().trim();
     String chucVu = txtChucVu.getSelectedItem().toString();
 
-    if (!KiemTraNhap.isValidID(maNV)) {
-        JOptionPane.showMessageDialog(this, "Mã nhân viên không hợp lệ!");
+    String error;
+
+    error = KiemTraNhap.validateID(maNV);
+    if (error != null) {
+        JOptionPane.showMessageDialog(this, "Error: " + error);
         txtMaNhanVien.requestFocus();
         return;
     }
-    if (!KiemTraNhap.isValidName(hoTen)) {
-        JOptionPane.showMessageDialog(this, "Họ và tên không hợp lệ!");
+
+    error = KiemTraNhap.validateName(hoTen);
+    if (error != null) {
+        JOptionPane.showMessageDialog(this, "Error: " + error);
         txtTenNhanVien.requestFocus();
         return;
     }
-    if (!KiemTraNhap.isValidEmail(email)) {
-        JOptionPane.showMessageDialog(this, "Email không hợp lệ!");
+
+    error = KiemTraNhap.validateEmail(email);
+    if (error != null) {
+        JOptionPane.showMessageDialog(this, "Error: " + error);
         txtEmailNhanVien.requestFocus();
         return;
     }
-    if (!KiemTraNhap.isValidCCCD(cccd)) {
-        JOptionPane.showMessageDialog(this, "Căn cước không hợp lệ!");
+
+    error = KiemTraNhap.validateCCCD(cccd);
+    if (error != null) {
+        JOptionPane.showMessageDialog(this, "Error: " + error);
         txtCanCuoc.requestFocus();
         return;
     }
-    if (!KiemTraNhap.isValidPassword(matKhau)) {
-        JOptionPane.showMessageDialog(this, "Mật khẩu không hợp lệ!");
+
+    error = KiemTraNhap.validatePassword(matKhau);
+    if (error != null) {
+        JOptionPane.showMessageDialog(this, "Error: " + error);
         txtMatKhau.requestFocus();
         return;
     }
 
     if (!isEditing && isDuplicateCCCD(cccd)) {
-        JOptionPane.showMessageDialog(this, "Căn cước đã tồn tại!");
+        JOptionPane.showMessageDialog(this, "Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
         txtCanCuoc.requestFocus();
+        return;
+    }
+
+    if (!isEditing && isDuplicateEmail(email)) {
+        JOptionPane.showMessageDialog(this, "Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+        txtEmailNhanVien.requestFocus();
         return;
     }
 
     Date ngaySinh = txtNgaySinhNhanVien.getDate();
     if (ngaySinh == null) {
-        JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ!");
+        JOptionPane.showMessageDialog(this, "Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
         txtNgaySinhNhanVien.requestFocus();
         return;
     }
@@ -239,7 +314,6 @@ private void btnLuuActionPerformed() {
         JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
     }
 }
-
 
 private String generateMaNV(Connection conn) throws SQLException {
     try (Statement stmt = conn.createStatement();
@@ -417,7 +491,7 @@ public static void main(String[] args) {
 	 * Create the frame.
 	 */
 	public FrameQuanLyNhanVien() {
-		setModalExclusionType(ModalExclusionType.TOOLKIT_EXCLUDE);
+		
 //		setTitle("Quản lí nhân viên\r\n");
 //		setResizable(true);
 //		setSize(1440,1024);
@@ -439,7 +513,7 @@ public static void main(String[] args) {
 		setSize(1440,1024);
 		getContentPane().setLayout(null);
 		setLocationRelativeTo(null);
-		
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 		pnlBackGround = new JPanel();
 		pnlBackGround.setBounds(0, 0, 1540, 755);
@@ -487,10 +561,10 @@ public static void main(String[] args) {
 		btnXuat.setBounds(1099, 13, 177, 65);
 		panel.add(btnXuat);
 		
-		JButton btnLu = new JButton("Lưu");
+		JButton btnLu = new JButton("Thêm");
 		btnLu.setBounds(61, 13, 177, 65);
 		panel.add(btnLu);
-		btnLu.setIcon(new ImageIcon("icons\\btnLuu.png"));
+		btnLu.setIcon(new ImageIcon("icons\\btnThem.png"));
 		btnLu.setForeground(Color.WHITE);
 		btnLu.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnLu.setBackground(new Color(167, 62, 20));
@@ -584,48 +658,58 @@ public static void main(String[] args) {
 		pnlBackGround.add(logoMTP);
 		
 		JScrollPane scrollPaneNhanVien = new JScrollPane();
-		scrollPaneNhanVien.setBounds(10, 417, 989, 338);
+		scrollPaneNhanVien.setBounds(10, 417, 1009, 338);
 		pnlBackGround.add(scrollPaneNhanVien);
 		
 		tableNhanVien = new JTable();
+		tableNhanVien.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		tableNhanVien.setModel(new DefaultTableModel(
-		    new Object[][] {
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		        {null, null, null, null, null, null, null, null},
-		    },
-		    new String[] {
-		        "Mã nhân viên", "Họ và tên", "Giới tính", "Email", "Ngày sinh", "CCCD", "Mật khẩu", "Chức vụ"
-		    }
+			new Object[][] {
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+				{null, null, null, null, null, null, null, null},
+			},
+			new String[] {
+				"M\u00E3 nh\u00E2n vi\u00EAn", "H\u1ECD v\u00E0 t\u00EAn", "Gi\u1EDBi t\u00EDnh", "Email", "Ng\u00E0y sinh", "CCCD", "M\u1EADt kh\u1EA9u", "Ch\u1EE9c v\u1EE5"
+			}
 		) {
-		    Class[] columnTypes = new Class[] {
-		        String.class, String.class, String.class, String.class, String.class, Integer.class, String.class, String.class
-		    };
-		    public Class getColumnClass(int columnIndex) {
-		        return columnTypes[columnIndex];
-		    }
+			Class[] columnTypes = new Class[] {
+				String.class, String.class, String.class, String.class, String.class, Integer.class, String.class, String.class
+			};
+			public Class getColumnClass(int columnIndex) {
+				return columnTypes[columnIndex];
+			}
 		});
+		tableNhanVien.getColumnModel().getColumn(2).setPreferredWidth(55);
 		
 		JTableHeader header = tableNhanVien.getTableHeader();
-        header.setFont(new Font("Arial", Font.BOLD, 18));
+        header.setFont(new Font("Arial", Font.BOLD, 19));
+        tableNhanVien.setRowHeight(30);
 		scrollPaneNhanVien.setViewportView(tableNhanVien);
-		
+		// Create a custom cell renderer that centers the text
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+		// Apply the renderer to each column of the table
+		for (int i = 0; i < tableNhanVien.getColumnCount(); i++) {
+		    tableNhanVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+		}
 		txtGioiTinhTim = new JComboBox();
 		txtGioiTinhTim.setFont(new Font("Tahoma", Font.BOLD, 16));
 		txtGioiTinhTim.setModel(new DefaultComboBoxModel(new String[] {"Nam", "Nữ"}));
@@ -634,7 +718,7 @@ public static void main(String[] args) {
 		
 		JPanel pnlTacVu = new JPanel();
 		pnlTacVu.setBackground(new Color(255, 128, 64));
-		pnlTacVu.setBounds(1015, 417, 397, 338);
+		pnlTacVu.setBounds(1029, 417, 383, 338);
 		pnlBackGround.add(pnlTacVu);
 		pnlTacVu.setLayout(null);
 		TitledBorder titledBorder = BorderFactory.createTitledBorder("Tác vụ");
