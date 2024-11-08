@@ -1,10 +1,11 @@
 package GUI;
 
-import java.awt.EventQueue;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,43 +15,30 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import javax.swing.JTextField;
-import com.toedter.calendar.JDateChooser;
-
-import controller.QuanLiSanPham;
-import model.SanPham;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
 import javax.swing.JButton;
-import com.toedter.components.JSpinField;
-
-import DAO.SanPhamDAO;
-import connectDB.ConnectDB;
-
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.JSlider;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+//
+//import org.apache.poi.ss.usermodel.*;
+//import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import com.toedter.calendar.JDateChooser;
+
+import DAO.SanPhamDAO;
+import connect.ConnectDB;
+import model.SanPham;
 
 public class FrameQuanLySanPham extends JPanel implements ActionListener {
 
@@ -448,9 +436,9 @@ public void actionPerformed(ActionEvent e) {
 	if(o.equals(btnHuy)) {
 		clearInputFields();
 	}
-	if(o.equals(btnXuat)) {
-		exportToExcel();
-    }
+//	if(o.equals(btnXuat)) {
+//		exportToExcel();
+//    }
 	if(o.equals(btnTim)) {
 		btnTimActionPerformed();
 		clearSearchFields();
@@ -633,46 +621,46 @@ private void clearInputFields() {
     txtNgaySX.setDate(null);
 }
 
-private void exportToExcel() {
-    Workbook workbook = new XSSFWorkbook();
-    Sheet sheet = workbook.createSheet("DanhSachSanPham");
-
-    // Create header row
-    Row headerRow = sheet.createRow(0);
-    String[] headers = {"Mã hàng", "Tên hàng", "Mô tả", "Đơn giá", "Số lượng", "Ngày sản xuất"};
-    for (int i = 0; i < headers.length; i++) {
-        Cell cell = headerRow.createCell(i);
-        cell.setCellValue(headers[i]);
-    }
-
-    // Populate data rows
-    List<SanPham> sanPhamList = sanPhamDAO.getAllSanPham();
-    int rowNum = 1;
-    for (SanPham sp : sanPhamList) {
-        Row row = sheet.createRow(rowNum++);
-        row.createCell(0).setCellValue(sp.getMaHang());
-        row.createCell(1).setCellValue(sp.getTenHang());
-        row.createCell(2).setCellValue(sp.getMoTa());
-        row.createCell(3).setCellValue(sp.getDonGia());
-        row.createCell(4).setCellValue(sp.getSoLuong());
-        row.createCell(5).setCellValue(sp.getNgaySX());
-    }
-
-    // Write the output to a file
-    try (FileOutputStream fileOut = new FileOutputStream("DanhSachSanPham.xlsx")) {
-        workbook.write(fileOut);
-        JOptionPane.showMessageDialog(this, "Xuất file Excel thành công");
-    } catch (IOException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Xuất file Excel thất bại");
-    } finally {
-        try {
-            workbook.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-}
+//private void exportToExcel() {
+//    Workbook workbook = new XSSFWorkbook();
+//    Sheet sheet = workbook.createSheet("DanhSachSanPham");
+//
+//    // Create header row
+//    Row headerRow = sheet.createRow(0);
+//    String[] headers = {"Mã hàng", "Tên hàng", "Mô tả", "Đơn giá", "Số lượng", "Ngày sản xuất"};
+//    for (int i = 0; i < headers.length; i++) {
+//        Cell cell = headerRow.createCell(i);
+//        cell.setCellValue(headers[i]);
+//    }
+//
+//    // Populate data rows
+//    List<SanPham> sanPhamList = sanPhamDAO.getAllSanPham();
+//    int rowNum = 1;
+//    for (SanPham sp : sanPhamList) {
+//        Row row = sheet.createRow(rowNum++);
+//        row.createCell(0).setCellValue(sp.getMaHang());
+//        row.createCell(1).setCellValue(sp.getTenHang());
+//        row.createCell(2).setCellValue(sp.getMoTa());
+//        row.createCell(3).setCellValue(sp.getDonGia());
+//        row.createCell(4).setCellValue(sp.getSoLuong());
+//        row.createCell(5).setCellValue(sp.getNgaySX());
+//    }
+//
+//    // Write the output to a file
+//    try (FileOutputStream fileOut = new FileOutputStream("DanhSachSanPham.xlsx")) {
+//        workbook.write(fileOut);
+//        JOptionPane.showMessageDialog(this, "Xuất file Excel thành công");
+//    } catch (IOException e) {
+//        e.printStackTrace();
+//        JOptionPane.showMessageDialog(this, "Xuất file Excel thất bại");
+//    } finally {
+//        try {
+//            workbook.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//}
 //Sự kiện nút tìm kiếm
 private void btnTimActionPerformed() {
 	String maHang = txtMaTim.getText().trim();
