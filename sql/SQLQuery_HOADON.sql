@@ -1,0 +1,37 @@
+USE [DB_QLBH]
+GO
+
+/****** Object:  Table [dbo].[HoaDon]    Script Date: 08/11/2024 10:20:52 SA ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[HoaDon](
+	[MaHD] [nvarchar](50) NOT NULL,
+	[MANV] [nvarchar](50) NOT NULL,
+	[maKhachHang] [nvarchar](50) NULL,
+	[NgayLap] [nvarchar](50) NULL,
+ CONSTRAINT [PK_HoaDon] PRIMARY KEY CLUSTERED 
+(
+	[MaHD] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[HoaDon]  WITH CHECK ADD  CONSTRAINT [FK_HoaDon_KhachHang] FOREIGN KEY([maKhachHang])
+REFERENCES [dbo].[KhachHang] ([maKhachHang])
+GO
+
+ALTER TABLE [dbo].[HoaDon] CHECK CONSTRAINT [FK_HoaDon_KhachHang]
+GO
+
+ALTER TABLE [dbo].[HoaDon]  WITH CHECK ADD  CONSTRAINT [FK_HoaDon_TaiKhoanNV] FOREIGN KEY([MANV])
+REFERENCES [dbo].[TaiKhoanNV] ([MANV])
+GO
+
+ALTER TABLE [dbo].[HoaDon] CHECK CONSTRAINT [FK_HoaDon_TaiKhoanNV]
+GO
+
+
