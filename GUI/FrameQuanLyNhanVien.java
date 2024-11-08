@@ -144,173 +144,179 @@ public class FrameQuanLyNhanVien extends JPanel {
 		}
 	}
 
-   private boolean isDuplicateCCCD(String cccd) {
-       return nhanVienDAO.isDuplicateCCCD(cccd);
-   }
 
+	private boolean isDuplicateCCCD(String cccd, String maNV) {
+	    return nhanVienDAO.isDuplicateCCCD(cccd, maNV);
+	}
+	
 
-   private boolean isDuplicateEmail(String email) {
-       return nhanVienDAO.isDuplicateEmail(email);
-   }
+	private boolean isDuplicateEmail(String email, String maNV) {
+	    return nhanVienDAO.isDuplicateEmail(email, maNV);
+	}
+
 
 
    // Sự kiện nút Lưu
+	private void btnLuuActionPerformed() {
+	    // Set the txtMaNhanVien text field to be editable
+	    txtMaNhanVien.setEditable(true);
 
-   private void btnLuuActionPerformed() {
-	   String maNV = txtMaNhanVien.getText().trim();
-       String hoTen = txtTenNhanVien.getText().trim();
-       String email = txtEmailNhanVien.getText().trim();
-       String cccd = txtCanCuoc.getText().trim();
-       String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
-       String matKhau = txtMatKhau.getText().trim();
-       String chucVu = txtChucVu.getSelectedItem().toString();
+	    // Existing code for adding a new employee
+	    String maNV = txtMaNhanVien.getText().trim();
+	    String hoTen = txtTenNhanVien.getText().trim();
+	    String email = txtEmailNhanVien.getText().trim();
+	    String cccd = txtCanCuoc.getText().trim();
+	    String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
+	    String matKhau = txtMatKhau.getText().trim();
+	    String chucVu = txtChucVu.getSelectedItem().toString();
 
-       String error;
+	    String error;
 
-       error = KiemTraNhap.validateID(maNV);
-       if (error != null) {
-           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-           txtMaNhanVien.requestFocus();
-           return;
-       }
+	    error = KiemTraNhap.validateID(maNV);
+	    if (error != null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+	        txtMaNhanVien.requestFocus();
+	        return;
+	    }
 
-       error = KiemTraNhap.validateName(hoTen);
-       if (error != null) {
-           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-           txtTenNhanVien.requestFocus();
-           return;
-       }
+	    error = KiemTraNhap.validateName(hoTen);
+	    if (error != null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+	        txtTenNhanVien.requestFocus();
+	        return;
+	    }
 
-       error = KiemTraNhap.validateEmail(email);
-       if (error != null) {
-           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-           txtEmailNhanVien.requestFocus();
-           return;
-       }
+	    error = KiemTraNhap.validateEmail(email);
+	    if (error != null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+	        txtEmailNhanVien.requestFocus();
+	        return;
+	    }
 
-       error = KiemTraNhap.validateCCCD(cccd);
-       if (error != null) {
-           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-           txtCanCuoc.requestFocus();
-           return;
-       }
+	    error = KiemTraNhap.validateCCCD(cccd);
+	    if (error != null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+	        txtCanCuoc.requestFocus();
+	        return;
+	    }
 
-       error = KiemTraNhap.validatePassword(matKhau);
-       if (error != null) {
-           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-           txtMatKhau.requestFocus();
-           return;
-       }
+	    error = KiemTraNhap.validatePassword(matKhau);
+	    if (error != null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+	        txtMatKhau.requestFocus();
+	        return;
+	    }
 
-       if (isDuplicateCCCD(cccd)) {
-           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
-           txtCanCuoc.requestFocus();
-           return;
-       }
+	    if (isDuplicateCCCD(cccd, maNV)) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+	        txtCanCuoc.requestFocus();
+	        return;
+	    }
 
-       if (isDuplicateEmail(email)) {
-           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
-           txtEmailNhanVien.requestFocus();
-           return;
-       }
+	    if (isDuplicateEmail(email, maNV)) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+	        txtEmailNhanVien.requestFocus();
+	        return;
+	    }
 
-       Date ngaySinh = txtNgaySinhNhanVien.getDate();
-       if (ngaySinh == null) {
-           JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
-           txtNgaySinhNhanVien.requestFocus();
-           return;
-       }
+	    Date ngaySinh = txtNgaySinhNhanVien.getDate();
+	    if (ngaySinh == null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
+	        txtNgaySinhNhanVien.requestFocus();
+	        return;
+	    }
 
-       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-       String ngaySinhStr = sdf.format(ngaySinh);
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    String ngaySinhStr = sdf.format(ngaySinh);
 
-       nhanVienDAO.saveNhanVien(false, maNV, hoTen, ngaySinhStr, email, gioiTinh, cccd, matKhau, chucVu);
-       loadDataToTable();
-       clearFields();
-   }
-
-
-
-// Sự kiện nút Sửa
-	private void btnSuaActionPerformed() {
-		int selectedRow = tableNhanVien.getSelectedRow();
-		if (selectedRow < 0) {
-			JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần sửa!");
-			return;
-		}
-
-		String maNV = txtMaNhanVien.getText().trim();
-        String hoTen = txtTenNhanVien.getText().trim();
-        String email = txtEmailNhanVien.getText().trim();
-        String cccd = txtCanCuoc.getText().trim();
-        String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
-        String matKhau = txtMatKhau.getText().trim();
-        String chucVu = txtChucVu.getSelectedItem().toString();
-
-        String error;
-
-        error = KiemTraNhap.validateID(maNV);
-        if (error != null) {
-            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-            txtMaNhanVien.requestFocus();
-            return;
-        }
-
-        error = KiemTraNhap.validateName(hoTen);
-        if (error != null) {
-            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-            txtTenNhanVien.requestFocus();
-            return;
-        }
-
-        error = KiemTraNhap.validateEmail(email);
-        if (error != null) {
-            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-            txtEmailNhanVien.requestFocus();
-            return;
-        }
-
-        error = KiemTraNhap.validateCCCD(cccd);
-        if (error != null) {
-            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-            txtCanCuoc.requestFocus();
-            return;
-        }
-
-        error = KiemTraNhap.validatePassword(matKhau);
-        if (error != null) {
-            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-            txtMatKhau.requestFocus();
-            return;
-        }
-
-        if (nhanVienDAO.isDuplicateCCCD(cccd) && !nhanVienDAO.isSameCCCD(maNV, cccd)) {
-            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
-            txtCanCuoc.requestFocus();
-            return;
-        }
-
-        if (nhanVienDAO.isDuplicateEmail(email) && !nhanVienDAO.isSameEmail(maNV, email)) {
-            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
-            txtEmailNhanVien.requestFocus();
-            return;
-        }
-
-        Date ngaySinh = txtNgaySinhNhanVien.getDate();
-        if (ngaySinh == null) {
-            JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
-            txtNgaySinhNhanVien.requestFocus();
-            return;
-        }
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String ngaySinhStr = sdf.format(ngaySinh);
-
-        nhanVienDAO.saveNhanVien(true, maNV, hoTen, ngaySinhStr, email, gioiTinh, cccd, matKhau, chucVu);
-        loadDataToTable();
-        clearFields();
+	    nhanVienDAO.saveNhanVien(false, maNV, hoTen, ngaySinhStr, email, gioiTinh, cccd, matKhau, chucVu);
+	    loadDataToTable();
+	    clearFields();
 	}
 
+   // Sự kiện nút Sửa
+	private void btnSuaActionPerformed() {
+	    int selectedRow = tableNhanVien.getSelectedRow();
+	    if (selectedRow < 0) {
+	        JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần sửa!");
+	        return;
+	    }
+
+	    // Set the txtMaNhanVien text field to be non-editable
+	    txtMaNhanVien.setEditable(false);
+
+	    String maNV = txtMaNhanVien.getText().trim();
+	    String hoTen = txtTenNhanVien.getText().trim();
+	    String email = txtEmailNhanVien.getText().trim();
+	    String cccd = txtCanCuoc.getText().trim();
+	    String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
+	    String matKhau = txtMatKhau.getText().trim();
+	    String chucVu = txtChucVu.getSelectedItem().toString();
+
+	    String error;
+
+	    error = KiemTraNhap.validateID(maNV);
+	    if (error != null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+	        txtMaNhanVien.requestFocus();
+	        return;
+	    }
+
+	    error = KiemTraNhap.validateName(hoTen);
+	    if (error != null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+	        txtTenNhanVien.requestFocus();
+	        return;
+	    }
+
+	    error = KiemTraNhap.validateEmail(email);
+	    if (error != null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+	        txtEmailNhanVien.requestFocus();
+	        return;
+	    }
+
+	    error = KiemTraNhap.validateCCCD(cccd);
+	    if (error != null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+	        txtCanCuoc.requestFocus();
+	        return;
+	    }
+
+	    error = KiemTraNhap.validatePassword(matKhau);
+	    if (error != null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+	        txtMatKhau.requestFocus();
+	        return;
+	    }
+
+	    if (nhanVienDAO.isDuplicateCCCD(cccd, maNV)) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+	        txtCanCuoc.requestFocus();
+	        return;
+	    }
+
+	    if (isDuplicateEmail(email, maNV)) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+	        txtEmailNhanVien.requestFocus();
+	        return;
+	    }
+
+	    Date ngaySinh = txtNgaySinhNhanVien.getDate();
+	    if (ngaySinh == null) {
+	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
+	        txtNgaySinhNhanVien.requestFocus();
+	        return;
+	    }
+
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    String ngaySinhStr = sdf.format(ngaySinh);
+
+	    nhanVienDAO.saveNhanVien(true, maNV, hoTen, ngaySinhStr, email, gioiTinh, cccd, matKhau, chucVu);
+	    loadDataToTable();
+	    clearFields();
+	}
+	
 	// Sự kiện nút Xóa
    private void btnXoaActionPerformed() {
        int selectedRow = tableNhanVien.getSelectedRow();
@@ -354,6 +360,8 @@ public class FrameQuanLyNhanVien extends JPanel {
 // Phương thức hỗ trợ xóa trắng form
 	private void clearFields() {
 		txtMaNhanVien.setText("");
+	    txtMaNhanVien.setEditable(true);
+
 		txtTenNhanVien.setText("");
 		txtEmailNhanVien.setText("");
 		txtCanCuoc.setText("");
@@ -524,9 +532,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		pnlBackGround.add(txtEmailNhanVien);
 
 		txtChucVu = new JComboBox<>();
-		txtChucVu.setModel(new DefaultComboBoxModel<>(new String[] { "Quản lý", "Nhân viên" })); // Sửa "Chức vụ" thành
-																									// "Nhân viên" cho
-																									// rõ nghĩa
+		txtChucVu.setModel(new DefaultComboBoxModel<>(new String[] { "Quản lý", "Nhân viên" })); 
 		txtChucVu.setBounds(800, 218, 259, 43);
 		txtChucVu.setFont(new Font("Dialog", Font.PLAIN, 18)); //
 		pnlBackGround.add(txtChucVu);
@@ -662,6 +668,8 @@ public class FrameQuanLyNhanVien extends JPanel {
 		        int selectedRow = tableNhanVien.getSelectedRow();
 		        if (selectedRow >= 0) {
 		            txtMaNhanVien.setText(tableModel.getValueAt(selectedRow, 0).toString());
+		            txtMaNhanVien.setEditable(false);
+
 		            txtTenNhanVien.setText(tableModel.getValueAt(selectedRow, 1).toString());
 		            txtGioiTinhTim.setSelectedItem(tableModel.getValueAt(selectedRow, 2).toString());
 		            txtEmailNhanVien.setText(tableModel.getValueAt(selectedRow, 3).toString());
@@ -679,7 +687,8 @@ public class FrameQuanLyNhanVien extends JPanel {
 		        }
 		    }
 		});
+		
 		// Load dữ liệu ban đầu
-//		loadDataToTable();
+		loadDataToTable();
 	}
 }

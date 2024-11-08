@@ -39,42 +39,19 @@ public class NhanVienDAO {
         return data;
     }
 
-    public boolean isDuplicateCCCD(String cccd) {
-        try (Connection conn = ConnectDB.getConnection("DB_QLBH");
-             PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*) FROM TaiKhoanNV WHERE CCCD = ?")) {
-            pstmt.setString(1, cccd);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi kiểm tra CCCD: " + e.getMessage());
-        }
-        return false;
-    }
 
-    public boolean isDuplicateEmail(String email) {
-        try (Connection conn = ConnectDB.getConnection("DB_QLBH");
-             PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*) FROM TaiKhoanNV WHERE Email = ?")) {
-            pstmt.setString(1, email);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi kiểm tra Email: " + e.getMessage());
-        }
-        return false;
-    }
-    
 
-	public boolean isSameCCCD(String maNV, String cccd) {
+	public boolean isDuplicateCCCD(String cccd, String maNV) {
+	    String sql = "SELECT COUNT(*) FROM TaiKhoanNV WHERE CCCD = ?";
+	    if (maNV != null) {
+	        sql += " AND MANV != ?";
+	    }
 	    try (Connection conn = ConnectDB.getConnection("DB_QLBH");
-	         PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*) FROM TaiKhoanNV WHERE CCCD = ? AND MANV = ?")) {
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 	        pstmt.setString(1, cccd);
-	        pstmt.setString(2, maNV);
+	        if (maNV != null) {
+	            pstmt.setString(2, maNV);
+	        }
 	        ResultSet rs = pstmt.executeQuery();
 	        if (rs.next()) {
 	            return rs.getInt(1) > 0;
@@ -86,11 +63,18 @@ public class NhanVienDAO {
 	    return false;
 	}
 	
-	public boolean isSameEmail(String maNV, String email) {
+
+	public boolean isDuplicateEmail(String email, String maNV) {
+	    String sql = "SELECT COUNT(*) FROM TaiKhoanNV WHERE Email = ?";
+	    if (maNV != null) {
+	        sql += " AND MANV != ?";
+	    }
 	    try (Connection conn = ConnectDB.getConnection("DB_QLBH");
-	         PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*) FROM TaiKhoanNV WHERE Email = ? AND MANV = ?")) {
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 	        pstmt.setString(1, email);
-	        pstmt.setString(2, maNV);
+	        if (maNV != null) {
+	            pstmt.setString(2, maNV);
+	        }
 	        ResultSet rs = pstmt.executeQuery();
 	        if (rs.next()) {
 	            return rs.getInt(1) > 0;
@@ -101,6 +85,7 @@ public class NhanVienDAO {
 	    }
 	    return false;
 	}
+
 
 
     public void saveNhanVien(boolean isEditing, String maNV, String hoTen, String ngaySinhStr, String email, String gioiTinh, String cccd, String matKhau, String chucVu) {
