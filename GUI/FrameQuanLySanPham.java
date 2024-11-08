@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,8 +32,10 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 import javax.swing.JButton;
 import com.toedter.components.JSpinField;
 
@@ -93,6 +96,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 	 * Create the frame.
 	 */
 	public FrameQuanLySanPham() {
+//Frame
 //		setTitle("Quản lí sản phẩm\r\n");
 //		setResizable(true);
 //		setSize(1440,1024);
@@ -111,60 +115,60 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 //		panel.setBackground(new Color(255, 128, 64));
 //		pnlBackGround.add(panel);
 //		panel.setLayout(null);
-		
+//		
 		setLayout(null);
 
 		pnlBackGround = new JPanel();
-		pnlBackGround.setBounds(0, 0, 1540, 755);
+		pnlBackGround.setBounds(0, 0, 1545, 854);
 		pnlBackGround.setBackground(new Color(254, 222, 192));
 		pnlBackGround.setBorder(new EmptyBorder(5, 5, 5, 5));
 		add(pnlBackGround);
 		pnlBackGround.setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(0, 221, 1586, 89);
+		panel.setBounds(0, 221, 1545, 89);
 		panel.setBackground(new Color(242, 132, 123));
 		pnlBackGround.add(panel);
 		panel.setLayout(null);
 		
 		btnThem = new JButton("Thêm");
-		btnThem.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnThem.png"));
-		btnThem.setBackground(new Color(167, 62, 20));
-		btnThem.setForeground(new Color(255, 255, 255));
+		btnThem.setIcon(new ImageIcon("icon\\btnThem.png"));
+		btnThem.setBackground(new Color(222, 77, 134));
+		btnThem.setForeground(new Color(0, 0, 0));
 		btnThem.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnThem.setBounds(55, 20, 156, 45);
+		btnThem.setBounds(67, 20, 156, 45);
 		panel.add(btnThem);
 		
 		btnSua = new JButton("Sửa");
-		btnSua.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnSua.png"));
-		btnSua.setForeground(Color.WHITE);
+		btnSua.setIcon(new ImageIcon("icon\\btnSua.png"));
+		btnSua.setForeground(new Color(0, 0, 0));
+		btnSua.setBackground(new Color(222, 77, 134));
 		btnSua.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnSua.setBackground(new Color(167, 62, 20));
-		btnSua.setBounds(300, 20, 156, 45);
+		btnSua.setBounds(385, 20, 156, 45);
 		panel.add(btnSua);
 		
 		btnXoa = new JButton("Xóa");
-		btnXoa.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnXoa.png"));
-		btnXoa.setForeground(Color.WHITE);
+		btnXoa.setIcon(new ImageIcon("icon\\btnXoa.png"));
+		btnXoa.setForeground(new Color(0, 0, 0));
+		btnXoa.setBackground(new Color(222, 77, 134));
 		btnXoa.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnXoa.setBackground(new Color(167, 62, 20));
-		btnXoa.setBounds(565, 20, 156, 45);
+		btnXoa.setBounds(704, 20, 156, 45);
 		panel.add(btnXoa);
 		
 		btnHuy = new JButton("Hủy");
-		btnHuy.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnCancel.png"));
-		btnHuy.setForeground(Color.WHITE);
+		btnHuy.setIcon(new ImageIcon("icon\\btnCancel.png"));
+		btnHuy.setForeground(new Color(0, 0, 0));
+		btnHuy.setBackground(new Color(222, 77, 134));
 		btnHuy.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnHuy.setBackground(new Color(167, 62, 20));
-		btnHuy.setBounds(862, 20, 156, 45);
+		btnHuy.setBounds(1010, 20, 156, 45);
 		panel.add(btnHuy);
 		
-		btnXuat = new JButton("Xuất");
-		btnXuat.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\TapHoa_MTP\\src\\test\\resources\\icons\\btnprint.png"));
-		btnXuat.setForeground(Color.WHITE);
+		btnXuat = new JButton("Xuất File");
+		btnXuat.setIcon(new ImageIcon("icon\\xuat.png"));
+		btnXuat.setForeground(new Color(0, 0, 0));
+		btnXuat.setBackground(new Color(222, 77, 134));
 		btnXuat.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnXuat.setBackground(new Color(167, 62, 20));
-		btnXuat.setBounds(1166, 20, 156, 45);
+		btnXuat.setBounds(1321, 20, 156, 45);
 		panel.add(btnXuat);
 		
 		JLabel lblMota = new JLabel("Mô tả:");
@@ -194,22 +198,22 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		
 		JLabel lblNgaySX = new JLabel("Ngày sản xuất:");
 		lblNgaySX.setFont(new Font("Segoe UI", Font.BOLD, 20));
-		lblNgaySX.setBounds(561, 157, 160, 40);
-		pnlBackGround.add(lblNgaySX);
+		lblNgaySX.setBounds(561, 147, 160, 40);
+pnlBackGround.add(lblNgaySX);
 		
 		txtMaHang = new JTextField();
-		txtMaHang.setBounds(155, 40, 229, 30);
+		txtMaHang.setBounds(176, 33, 258, 40);
 		pnlBackGround.add(txtMaHang);
 		txtMaHang.setColumns(10);
 		
 		txtTenHang = new JTextField();
 		txtTenHang.setColumns(10);
-		txtTenHang.setBounds(155, 96, 229, 30);
+		txtTenHang.setBounds(176, 97, 258, 40);
 		pnlBackGround.add(txtTenHang);
 		
 		txtMoTa = new JTextField();
 		txtMoTa.setColumns(10);
-		txtMoTa.setBounds(155, 160, 229, 30);
+		txtMoTa.setBounds(176, 158, 258, 40);
 		pnlBackGround.add(txtMoTa);
 		
 		txtDonGia = new JTextField();
@@ -218,16 +222,16 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		pnlBackGround.add(txtDonGia);
 		
 		txtNgaySX = new JDateChooser();
-		txtNgaySX.setBounds(718, 157, 259, 40);
+		txtNgaySX.setBounds(718, 147, 259, 40);
 		pnlBackGround.add(txtNgaySX);
 		
 		JLabel logoMTP = new JLabel("");
-		logoMTP.setIcon(new ImageIcon("D:\\Download\\logoMTP 1.png"));
+		logoMTP.setIcon(new ImageIcon("image\\logoMTP 1.png"));
 		logoMTP.setBounds(1054, -3, 403, 214);
 		pnlBackGround.add(logoMTP);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 348, 996, 292);
+		scrollPane.setBounds(11, 338, 1147, 407);
 		pnlBackGround.add(scrollPane);
 		
 		tableSanPham = new JTable();
@@ -236,12 +240,18 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 				
 			},
 			new String[] {
-				"M\u00E3 h\u00E0ng", "T\u00EAn h\u00E0ng", "M\u00F4 t\u1EA3", "\u0110\u01A1n gi\u00E1 ", "S\u1ED1 l\u01B0\u1EE3ng", "Ng\u00E0y s\u1EA3n xu\u1EA5t"
+				"Mã hàng", "Tên hàng", "Mô tả", "Đơn giá ", "Số lượng", "Ngày sản xuất"
 			}
 		) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			@SuppressWarnings("rawtypes")
 			Class[] columnTypes = new Class[] {
 				String.class, String.class, String.class, Double.class, Integer.class, String.class
 			};
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
 			}
@@ -253,13 +263,13 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		
 		txtSoLuong = new JSpinner();
 		txtSoLuong.setFont(new Font("Tahoma", Font.BOLD, 18));
-		txtSoLuong.setBounds(718, 88, 127, 40);
+		txtSoLuong.setBounds(718, 88, 259, 40);
 		pnlBackGround.add(txtSoLuong);
 		
 		JPanel panelTimKiem = new JPanel();
-		panelTimKiem.setBackground(new Color(255, 128, 0));
+		panelTimKiem.setBackground(new Color(242, 132, 123));
 		panelTimKiem.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panelTimKiem.setBounds(1054, 348, 362, 470);
+		panelTimKiem.setBounds(1168, 335, 362, 410);
 		pnlBackGround.add(panelTimKiem);
 		panelTimKiem.setLayout(null);
 		TitledBorder titledBorder = BorderFactory.createTitledBorder("Tác vụ");
@@ -279,32 +289,31 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		btnTim = new JButton("Tìm");
 		btnTim.setBackground(new Color(255, 0, 0));
 		btnTim.setFont(new Font("Tahoma", Font.BOLD, 20));
-		btnTim.setBounds(120, 179, 85, 25);
+		btnTim.setBounds(131, 183, 85, 25);
 		panelTimKiem.add(btnTim);
-		
 		JLabel lblNewLabel_1 = new JLabel("Lọc theo giá");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabel_1.setBounds(95, 236, 151, 25);
+		lblNewLabel_1.setBounds(110, 237, 151, 25);
 		panelTimKiem.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_2 = new JLabel("Từ");
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabel_2.setBounds(10, 294, 45, 25);
+		lblNewLabel_2.setBounds(38, 294, 45, 25);
 		panelTimKiem.add(lblNewLabel_2);
 		
 		JLabel lblNewLabel_3 = new JLabel("-");
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 58));
-		lblNewLabel_3.setBounds(157, 295, 45, 13);
+		lblNewLabel_3.setBounds(197, 294, 45, 13);
 		panelTimKiem.add(lblNewLabel_3);
 		
 		txtEnd = new JTextField();
-		txtEnd.setBounds(202, 288, 96, 31);
+		txtEnd.setBounds(238, 288, 96, 31);
 		panelTimKiem.add(txtEnd);
 		txtEnd.setColumns(10);
 		
 		txtStart = new JTextField();
 		txtStart.setColumns(10);
-		txtStart.setBounds(51, 288, 96, 31);
+		txtStart.setBounds(93, 288, 96, 31);
 		panelTimKiem.add(txtStart);
 		
 		btnLoc = new JButton("Lọc");
@@ -312,7 +321,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 			
 		btnLoc.setFont(new Font("Tahoma", Font.BOLD, 20));
 		btnLoc.setBackground(Color.RED);
-		btnLoc.setBounds(62, 347, 85, 25);
+		btnLoc.setBounds(82, 347, 85, 25);
 		panelTimKiem.add(btnLoc);
 		
 		JLabel lblNewLabel_4 = new JLabel("Tên hàng:");
@@ -337,7 +346,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		btnTaiLai = new JButton("Tải lại");
 		btnTaiLai.setFont(new Font("Tahoma", Font.BOLD, 20));
 		btnTaiLai.setBackground(Color.RED);
-		btnTaiLai.setBounds(194, 347, 104, 25);
+		btnTaiLai.setBounds(197, 347, 104, 25);
 		panelTimKiem.add(btnTaiLai);
 
 		
@@ -379,6 +388,8 @@ tableSanPham.addMouseListener(new java.awt.event.MouseAdapter() {
 		btnSua.addActionListener(this);
 		btnHuy.addActionListener(this);
 		btnXuat.addActionListener(this);
+		btnTaiLai.addActionListener(this);
+		btnTim.addActionListener(this);
 	}
 
 @Override
@@ -410,6 +421,7 @@ public void actionPerformed(ActionEvent e) {
             if (deleteSanPhamFromDatabase(maHang)) {
                 JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
                 clearDataToTable();
+                clearInputFields();
                 loadDataToTable();
 //                txtMaHang.setText(sanPhamDAO.getNextMaHang());
             } else {
@@ -439,6 +451,14 @@ public void actionPerformed(ActionEvent e) {
 	if(o.equals(btnXuat)) {
 		exportToExcel();
     }
+	if(o.equals(btnTim)) {
+		btnTimActionPerformed();
+		clearSearchFields();
+	}
+	if (btnTaiLai.equals(o)) {
+		clearDataToTable();
+		loadDataToTable();
+	}
 }
 
 
@@ -653,6 +673,49 @@ private void exportToExcel() {
         }
     }
 }
-
+//Sự kiện nút tìm kiếm
+private void btnTimActionPerformed() {
+	String maHang = txtMaTim.getText().trim();
+	String tenHang = txtTenTim.getText().trim();
+	String ngaySX = getFormattedDate(txtNgaySX);
+	
+	StringBuilder sql = new StringBuilder("SELECT * FROM DanhSachSanPham WHERE 1=1");
+	List<Object> params = new ArrayList<>();
+	
+	if (!maHang.isEmpty()) {
+		sql.append(" AND MaHang LIKE ?");
+		params.add( "%" + maHang + "%");
+	}
+	if (!tenHang.isEmpty()) {
+		sql.append(" AND TenHang LIKE ?");
+		params.add("%" + tenHang + "%");
+	}
+	if (!ngaySX.isEmpty()) {
+		sql.append(" AND NgaySanXuat = ?");
+		params.add(ngaySX);
+	}
+	try (Connection conn = ConnectDB.getConnection("DB_QLBH");
+			PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+		for (int i = 0; i < params.size(); i++) {
+			pstmt.setObject(i + 1, params.get(i));
+		}
+		try (ResultSet rs = pstmt.executeQuery()) {
+			DefaultTableModel model = (DefaultTableModel) tableSanPham.getModel();
+			model.setRowCount(0);
+			while (rs.next()) {
+				model.addRow(new Object[] { rs.getString("MaHang"), rs.getString("TenHang"), rs.getString("MoTa"),
+						rs.getDouble("DonGia"), rs.getInt("SoLuong"), rs.getString("NgaySanXuat") });
+			}
+		}
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+}
+//Phương thức hỗ trợ xóa trắng form tìm kiếm
+private void clearSearchFields() {
+ txtMaTim.setText("");
+ txtTenTim.setText("");
+ txtNgaySX.setDate(null);
+}
 
 }
