@@ -1,44 +1,59 @@
 package GUI;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.EventQueue;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-//
-//import org.apache.poi.ss.usermodel.*;
-//import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.awt.Font;
+import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
 
-import DAO.SanPhamDAO;
-import connect.ConnectDB;
+import controller.QuanLiSanPham;
 import model.SanPham;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.JButton;
+import com.toedter.components.JSpinField;
+
+import DAO.SanPhamDAO;
+import connectDB.ConnectDB;
+
+import javax.swing.JSpinner;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.JSlider;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class FrameQuanLySanPham extends JPanel implements ActionListener {
 
@@ -152,7 +167,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		panel.add(btnHuy);
 		
 		btnXuat = new JButton("Xuất File");
-		btnXuat.setIcon(new ImageIcon("icon\\xuat.png"));
+		btnXuat.setIcon(new ImageIcon("D:\\WorkSpaceHSK\\QuanLiBanHangHSK\\icon\\btnprint.png"));
 		btnXuat.setForeground(new Color(0, 0, 0));
 		btnXuat.setBackground(new Color(222, 77, 134));
 		btnXuat.setFont(new Font("Tahoma", Font.BOLD, 18));
@@ -187,7 +202,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		JLabel lblNgaySX = new JLabel("Ngày sản xuất:");
 		lblNgaySX.setFont(new Font("Segoe UI", Font.BOLD, 20));
 		lblNgaySX.setBounds(561, 147, 160, 40);
-pnlBackGround.add(lblNgaySX);
+		pnlBackGround.add(lblNgaySX);
 		
 		txtMaHang = new JTextField();
 		txtMaHang.setBounds(176, 33, 258, 40);
@@ -212,6 +227,19 @@ pnlBackGround.add(lblNgaySX);
 		txtNgaySX = new JDateChooser();
 		txtNgaySX.setBounds(718, 147, 259, 40);
 		pnlBackGround.add(txtNgaySX);
+		
+		// Add PropertyChangeListener to JDateChooser
+        txtNgaySX.addPropertyChangeListener("date", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                Date selectedDate = (Date) evt.getNewValue();
+                if (selectedDate != null) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    txtNgaySX.setDateFormatString(dateFormat.toPattern());
+                }
+            }
+        });
+        
 		
 		JLabel logoMTP = new JLabel("");
 		logoMTP.setIcon(new ImageIcon("image\\logoMTP 1.png"));
@@ -249,6 +277,12 @@ pnlBackGround.add(lblNgaySX);
         tableSanPham.setFont(new Font("Arial", Font.PLAIN, 16));
 		scrollPane.setViewportView(tableSanPham);
 		
+		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+	    rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+
+	    TableColumn dateColumn = tableSanPham.getColumnModel().getColumn(5);
+	    dateColumn.setCellRenderer(rightRenderer);
+	      
 		txtSoLuong = new JSpinner();
 		txtSoLuong.setFont(new Font("Tahoma", Font.BOLD, 18));
 		txtSoLuong.setBounds(718, 88, 259, 40);
@@ -308,7 +342,7 @@ pnlBackGround.add(lblNgaySX);
 		btnLoc.addActionListener(this);
 			
 		btnLoc.setFont(new Font("Tahoma", Font.BOLD, 20));
-		btnLoc.setBackground(Color.RED);
+		btnLoc.setBackground(new Color(255, 0, 0));
 		btnLoc.setBounds(82, 347, 85, 25);
 		panelTimKiem.add(btnLoc);
 		
@@ -333,7 +367,7 @@ pnlBackGround.add(lblNgaySX);
 		
 		btnTaiLai = new JButton("Tải lại");
 		btnTaiLai.setFont(new Font("Tahoma", Font.BOLD, 20));
-		btnTaiLai.setBackground(Color.RED);
+		btnTaiLai.setBackground(new Color(255, 0, 0));
 		btnTaiLai.setBounds(197, 347, 104, 25);
 		panelTimKiem.add(btnTaiLai);
 
@@ -360,7 +394,7 @@ tableSanPham.addMouseListener(new java.awt.event.MouseAdapter() {
             txtDonGia.setText(tableSanPham.getValueAt(selectedRow, 3).toString());
             txtSoLuong.setValue(tableSanPham.getValueAt(selectedRow, 4));
             try {
-                Date date = new SimpleDateFormat("dd-MM-yyyy").parse((String) tableSanPham.getValueAt(selectedRow, 5));
+                Date date = new SimpleDateFormat("yyyy-MM-dd").parse((String) tableSanPham.getValueAt(selectedRow, 5));
                 txtNgaySX.setDate(date);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -391,15 +425,21 @@ public void actionPerformed(ActionEvent e) {
         }
         if (validateData()) {
             SanPham sp = revertData();
-            if (addSanPhamToDatabase(sp)) {
-                JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công");
-                clearInputFields();
-                clearDataToTable();
-                loadDataToTable();
-//                txtMaHang.setText(sanPhamDAO.getNextMaHang());
-            } else {
-                JOptionPane.showMessageDialog(this, "Thêm sản phẩm thất bại");
-            }
+            try {
+            	if (addSanPhamToDatabase(sp)) {
+                    JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công");
+                    clearInputFields();
+                    clearDataToTable();
+                    loadDataToTable();
+//                    txtMaHang.setText(sanPhamDAO.getNextMaHang());
+                }
+            	else {
+                    JOptionPane.showMessageDialog(this, "Thêm sản phẩm thất bại");
+                }
+			} catch (Exception e2) {
+				// TODO: handle exception
+				e2.printStackTrace();
+			} 
         }
 	}
 	if (o.equals(btnXoa)) {
@@ -436,9 +476,9 @@ public void actionPerformed(ActionEvent e) {
 	if(o.equals(btnHuy)) {
 		clearInputFields();
 	}
-//	if(o.equals(btnXuat)) {
-//		exportToExcel();
-//    }
+	if(o.equals(btnXuat)) {
+		exportToExcel();
+    }
 	if(o.equals(btnTim)) {
 		btnTimActionPerformed();
 		clearSearchFields();
@@ -449,9 +489,6 @@ public void actionPerformed(ActionEvent e) {
 	}
 }
 
-
-
-
 private void showMessage(String message, JTextField txt) {
     txt.requestFocus();
     txt.selectAll();
@@ -459,9 +496,9 @@ private void showMessage(String message, JTextField txt) {
 }
 //Format chuỗi ngày
 private String getFormattedDate(JDateChooser dateChooser) {
- Date date = dateChooser.getDate();
+ Date date = (Date) dateChooser.getDate();
  if (date != null) {
-     SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-dd-MM");
      return formatter.format(date);
  } else {
      return "";
@@ -494,7 +531,7 @@ private boolean validateData() {
 
     // Regex to include Vietnamese characters
     String vietnamesePattern = "^[\\p{L}\\s]+$";
-    String reg_mahang = "SP\\d";
+    String reg_mahang = "SP\\d+";
     if (maHang.isEmpty()) {
         showMessage("Error: Mã hàng không được để trống", txtMaHang);
         return false;
@@ -564,8 +601,9 @@ private boolean deleteSanPhamFromDatabase(String maHang) {
         return false;
     }
    }
-private boolean addSanPhamToDatabase(SanPham sp) {
+private boolean addSanPhamToDatabase(SanPham sp) throws ParseException {
     String sql = "INSERT INTO DanhSachSanPham (MaHang, TenHang, MoTa, DonGia, SoLuong, NgaySanXuat) VALUES (?, ?, ?, ?, ?, ?)";
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     try (Connection conn = ConnectDB.getConnection("DB_QLBH");
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
         pstmt.setString(1, sp.getMaHang());
@@ -573,7 +611,8 @@ private boolean addSanPhamToDatabase(SanPham sp) {
         pstmt.setString(3, sp.getMoTa());
         pstmt.setDouble(4, sp.getDonGia());
         pstmt.setInt(5, sp.getSoLuong());
-        pstmt.setString(6, sp.getNgaySX());
+        java.util.Date utilDate = dateFormat.parse(sp.getNgaySX()); java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime()); pstmt.setDate(6, sqlDate);
+        pstmt.setDate(6, sqlDate);
         int rowsAffected = pstmt.executeUpdate();
         return rowsAffected > 0;
     } catch (SQLException e) {
@@ -621,46 +660,46 @@ private void clearInputFields() {
     txtNgaySX.setDate(null);
 }
 
-//private void exportToExcel() {
-//    Workbook workbook = new XSSFWorkbook();
-//    Sheet sheet = workbook.createSheet("DanhSachSanPham");
-//
-//    // Create header row
-//    Row headerRow = sheet.createRow(0);
-//    String[] headers = {"Mã hàng", "Tên hàng", "Mô tả", "Đơn giá", "Số lượng", "Ngày sản xuất"};
-//    for (int i = 0; i < headers.length; i++) {
-//        Cell cell = headerRow.createCell(i);
-//        cell.setCellValue(headers[i]);
-//    }
-//
-//    // Populate data rows
-//    List<SanPham> sanPhamList = sanPhamDAO.getAllSanPham();
-//    int rowNum = 1;
-//    for (SanPham sp : sanPhamList) {
-//        Row row = sheet.createRow(rowNum++);
-//        row.createCell(0).setCellValue(sp.getMaHang());
-//        row.createCell(1).setCellValue(sp.getTenHang());
-//        row.createCell(2).setCellValue(sp.getMoTa());
-//        row.createCell(3).setCellValue(sp.getDonGia());
-//        row.createCell(4).setCellValue(sp.getSoLuong());
-//        row.createCell(5).setCellValue(sp.getNgaySX());
-//    }
-//
-//    // Write the output to a file
-//    try (FileOutputStream fileOut = new FileOutputStream("DanhSachSanPham.xlsx")) {
-//        workbook.write(fileOut);
-//        JOptionPane.showMessageDialog(this, "Xuất file Excel thành công");
-//    } catch (IOException e) {
-//        e.printStackTrace();
-//        JOptionPane.showMessageDialog(this, "Xuất file Excel thất bại");
-//    } finally {
-//        try {
-//            workbook.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//}
+private void exportToExcel() {
+    Workbook workbook = new XSSFWorkbook();
+    Sheet sheet = workbook.createSheet("DanhSachSanPham");
+
+    // Create header row
+    Row headerRow = sheet.createRow(0);
+    String[] headers = {"Mã hàng", "Tên hàng", "Mô tả", "Đơn giá", "Số lượng", "Ngày sản xuất"};
+    for (int i = 0; i < headers.length; i++) {
+        Cell cell = headerRow.createCell(i);
+        cell.setCellValue(headers[i]);
+    }
+
+    // Populate data rows
+    List<SanPham> sanPhamList = sanPhamDAO.getAllSanPham();
+    int rowNum = 1;
+    for (SanPham sp : sanPhamList) {
+        Row row = sheet.createRow(rowNum++);
+        row.createCell(0).setCellValue(sp.getMaHang());
+        row.createCell(1).setCellValue(sp.getTenHang());
+        row.createCell(2).setCellValue(sp.getMoTa());
+        row.createCell(3).setCellValue(sp.getDonGia());
+        row.createCell(4).setCellValue(sp.getSoLuong());
+        row.createCell(5).setCellValue(sp.getNgaySX());
+    }
+
+    // Write the output to a file
+    try (FileOutputStream fileOut = new FileOutputStream("DanhSachSanPham.xlsx")) {
+        workbook.write(fileOut);
+        JOptionPane.showMessageDialog(this, "Xuất file Excel thành công");
+    } catch (IOException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Xuất file Excel thất bại");
+    } finally {
+        try {
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
 //Sự kiện nút tìm kiếm
 private void btnTimActionPerformed() {
 	String maHang = txtMaTim.getText().trim();
