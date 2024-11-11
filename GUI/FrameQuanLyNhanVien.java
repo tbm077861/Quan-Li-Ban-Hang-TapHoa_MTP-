@@ -6,12 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -37,7 +32,6 @@ import javax.swing.table.JTableHeader;
 import com.toedter.calendar.JDateChooser;
 
 import DAO.NhanVienDAO;
-import connectDB.*;
 
 public class FrameQuanLyNhanVien extends JPanel {
 
@@ -52,7 +46,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 	private JTextField txtTenNhanVienTim;
 	private JTextField txtCanCuocTim;
 	private JDateChooser txtNgaySinhNhanVien;
-	private JComboBox<String> txtGioiTinhTim, txtChucVu;
+	private JComboBox<String> txtGioiTinhTim,txtGioiTinh, txtChucVu;
 	private DefaultTableModel tableModel;
 	private JTextField txtMatKhau;
 	private boolean isEditing = false;
@@ -339,18 +333,25 @@ public class FrameQuanLyNhanVien extends JPanel {
 
 	// Sự kiện nút Tìm kiếm
 
-	private void btnTimActionPerformed() {
-		String maNV = txtMaNhanVienTim.getText().trim();
-		String hoTen = txtTenNhanVienTim.getText().trim();
-		String cccd = txtCanCuocTim.getText().trim();
-		String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
 
-		List<Object[]> data = nhanVienDAO.searchNhanVien(maNV, hoTen, cccd, gioiTinh);
-		tableModel.setRowCount(0);
-		for (Object[] row : data) {
-			tableModel.addRow(row);
-		}
+
+	private void btnTimActionPerformed() {
+	    String maNV = txtMaNhanVienTim.getText().trim();
+	    String hoTen = txtTenNhanVienTim.getText().trim();
+	    String cccd = txtCanCuocTim.getText().trim();
+	    String gioiTinh = txtGioiTinhTim.getSelectedItem().toString().trim(); // Retrieve selected gender
+	
+	    // Print the selected gender to the console
+	    System.out.println("Selected gender: " + gioiTinh);
+	
+	    List<Object[]> data = nhanVienDAO.searchNhanVien(maNV, hoTen, cccd, gioiTinh);
+	    tableModel.setRowCount(0);
+	    for (Object[] row : data) {
+	        tableModel.addRow(row);
+	    }
 	}
+
+
 
 // Sự kiện nút Tải lại
 	private void btnTaiLaiActionPerformed() {
@@ -582,11 +583,11 @@ public class FrameQuanLyNhanVien extends JPanel {
 		for (int i = 0; i < tableNhanVien.getColumnCount(); i++) {
 			tableNhanVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 		}
-		txtGioiTinhTim = new JComboBox();
-		txtGioiTinhTim.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		txtGioiTinhTim.setModel(new DefaultComboBoxModel(new String[] { "Nam", "Nữ" }));
-		txtGioiTinhTim.setBounds(800, 27, 148, 36);
-		pnlBackGround.add(txtGioiTinhTim);
+		txtGioiTinh = new JComboBox();
+		txtGioiTinh.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		txtGioiTinh.setModel(new DefaultComboBoxModel(new String[] { "Nam", "Nữ" }));
+		txtGioiTinh.setBounds(800, 27, 148, 36);
+		pnlBackGround.add(txtGioiTinh);
 
 		JPanel pnlTacVu = new JPanel();
 		pnlTacVu.setBackground(new Color(242, 132, 123));
@@ -632,7 +633,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		txtCanCuocTim.setBounds(168, 172, 198, 31);
 		pnlTacVu.add(txtCanCuocTim);
 
-		JComboBox txtGioiTinhTim = new JComboBox();
+		txtGioiTinhTim = new JComboBox();
 		txtGioiTinhTim.setFont(new Font("Tahoma", Font.BOLD, 16));
 		txtGioiTinhTim.setModel(new DefaultComboBoxModel(new String[] { "Nam", "Nữ" }));
 		txtGioiTinhTim.setBounds(168, 228, 115, 34);
@@ -669,7 +670,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 					txtMaNhanVien.setEditable(false);
 
 					txtTenNhanVien.setText(tableModel.getValueAt(selectedRow, 1).toString());
-					txtGioiTinhTim.setSelectedItem(tableModel.getValueAt(selectedRow, 2).toString());
+					txtGioiTinh.setSelectedItem(tableModel.getValueAt(selectedRow, 2).toString());
 					txtEmailNhanVien.setText(tableModel.getValueAt(selectedRow, 3).toString());
 					try {
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
