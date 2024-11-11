@@ -6,12 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -37,7 +32,6 @@ import javax.swing.table.JTableHeader;
 import com.toedter.calendar.JDateChooser;
 
 import DAO.NhanVienDAO;
-import connect.ConnectDB;
 
 public class FrameQuanLyNhanVien extends JPanel {
 
@@ -52,7 +46,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 	private JTextField txtTenNhanVienTim;
 	private JTextField txtCanCuocTim;
 	private JDateChooser txtNgaySinhNhanVien;
-	private JComboBox<String> txtGioiTinhTim, txtChucVu;
+	private JComboBox<String> txtGioiTinhTim,txtGioiTinh, txtChucVu;
 	private DefaultTableModel tableModel;
 	private JTextField txtMatKhau;
 	private boolean isEditing = false;
@@ -67,7 +61,6 @@ public class FrameQuanLyNhanVien extends JPanel {
 			tableModel.addRow(row);
 		}
 	}
-
 
 	public class KiemTraNhap {
 		public static String validateID(String id) {
@@ -144,212 +137,221 @@ public class FrameQuanLyNhanVien extends JPanel {
 		}
 	}
 
-
 	private boolean isDuplicateCCCD(String cccd, String maNV) {
-	    return nhanVienDAO.isDuplicateCCCD(cccd, maNV);
+		return nhanVienDAO.isDuplicateCCCD(cccd, maNV);
 	}
-	
 
 	private boolean isDuplicateEmail(String email, String maNV) {
-	    return nhanVienDAO.isDuplicateEmail(email, maNV);
+		return nhanVienDAO.isDuplicateEmail(email, maNV);
 	}
 
-
-
-   // Sự kiện nút Lưu
+	// Sự kiện nút Lưu
 	private void btnLuuActionPerformed() {
-	    // Set the txtMaNhanVien text field to be editable
-	    txtMaNhanVien.setEditable(true);
+		// Set the txtMaNhanVien text field to be editable
+		txtMaNhanVien.setEditable(true);
 
-	    // Existing code for adding a new employee
-	    String maNV = txtMaNhanVien.getText().trim();
-	    String hoTen = txtTenNhanVien.getText().trim();
-	    String email = txtEmailNhanVien.getText().trim();
-	    String cccd = txtCanCuoc.getText().trim();
-	    String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
-	    String matKhau = txtMatKhau.getText().trim();
-	    String chucVu = txtChucVu.getSelectedItem().toString();
+		// Existing code for adding a new employee
+		String maNV = txtMaNhanVien.getText().trim();
+		String hoTen = txtTenNhanVien.getText().trim();
+		String email = txtEmailNhanVien.getText().trim();
+		String cccd = txtCanCuoc.getText().trim();
+		String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
+		String matKhau = txtMatKhau.getText().trim();
+		String chucVu = txtChucVu.getSelectedItem().toString();
 
-	    String error;
+		String error;
 
-	    error = KiemTraNhap.validateID(maNV);
-	    if (error != null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-	        txtMaNhanVien.requestFocus();
-	        return;
-	    }
+		error = KiemTraNhap.validateID(maNV);
+		if (error != null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+			txtMaNhanVien.requestFocus();
+			return;
+		}
 
-	    error = KiemTraNhap.validateName(hoTen);
-	    if (error != null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-	        txtTenNhanVien.requestFocus();
-	        return;
-	    }
+		error = KiemTraNhap.validateName(hoTen);
+		if (error != null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+			txtTenNhanVien.requestFocus();
+			return;
+		}
 
-	    error = KiemTraNhap.validateEmail(email);
-	    if (error != null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-	        txtEmailNhanVien.requestFocus();
-	        return;
-	    }
+		error = KiemTraNhap.validateEmail(email);
+		if (error != null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+			txtEmailNhanVien.requestFocus();
+			return;
+		}
 
-	    error = KiemTraNhap.validateCCCD(cccd);
-	    if (error != null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-	        txtCanCuoc.requestFocus();
-	        return;
-	    }
+		error = KiemTraNhap.validateCCCD(cccd);
+		if (error != null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+			txtCanCuoc.requestFocus();
+			return;
+		}
 
-	    error = KiemTraNhap.validatePassword(matKhau);
-	    if (error != null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-	        txtMatKhau.requestFocus();
-	        return;
-	    }
+		error = KiemTraNhap.validatePassword(matKhau);
+		if (error != null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+			txtMatKhau.requestFocus();
+			return;
+		}
 
-	    if (isDuplicateCCCD(cccd, maNV)) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
-	        txtCanCuoc.requestFocus();
-	        return;
-	    }
+		if (isDuplicateCCCD(cccd, maNV)) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this,
+					"Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+			txtCanCuoc.requestFocus();
+			return;
+		}
 
-	    if (isDuplicateEmail(email, maNV)) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
-	        txtEmailNhanVien.requestFocus();
-	        return;
-	    }
+		if (isDuplicateEmail(email, maNV)) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this,
+					"Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+			txtEmailNhanVien.requestFocus();
+			return;
+		}
 
-	    Date ngaySinh = txtNgaySinhNhanVien.getDate();
-	    if (ngaySinh == null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
-	        txtNgaySinhNhanVien.requestFocus();
-	        return;
-	    }
+		Date ngaySinh = txtNgaySinhNhanVien.getDate();
+		if (ngaySinh == null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this,
+					"Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
+			txtNgaySinhNhanVien.requestFocus();
+			return;
+		}
 
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	    String ngaySinhStr = sdf.format(ngaySinh);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String ngaySinhStr = sdf.format(ngaySinh);
 
-	    nhanVienDAO.saveNhanVien(false, maNV, hoTen, ngaySinhStr, email, gioiTinh, cccd, matKhau, chucVu);
-	    loadDataToTable();
-	    clearFields();
+		nhanVienDAO.saveNhanVien(false, maNV, hoTen, ngaySinhStr, email, gioiTinh, cccd, matKhau, chucVu);
+		loadDataToTable();
+		clearFields();
 	}
 
-   // Sự kiện nút Sửa
+	// Sự kiện nút Sửa
 	private void btnSuaActionPerformed() {
-	    int selectedRow = tableNhanVien.getSelectedRow();
-	    if (selectedRow < 0) {
-	        JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần sửa!");
-	        return;
-	    }
+		int selectedRow = tableNhanVien.getSelectedRow();
+		if (selectedRow < 0) {
+			JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần sửa!");
+			return;
+		}
 
-	    // Set the txtMaNhanVien text field to be non-editable
-	    txtMaNhanVien.setEditable(false);
+		// Set the txtMaNhanVien text field to be non-editable
+		txtMaNhanVien.setEditable(false);
 
-	    String maNV = txtMaNhanVien.getText().trim();
-	    String hoTen = txtTenNhanVien.getText().trim();
-	    String email = txtEmailNhanVien.getText().trim();
-	    String cccd = txtCanCuoc.getText().trim();
-	    String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
-	    String matKhau = txtMatKhau.getText().trim();
-	    String chucVu = txtChucVu.getSelectedItem().toString();
+		String maNV = txtMaNhanVien.getText().trim();
+		String hoTen = txtTenNhanVien.getText().trim();
+		String email = txtEmailNhanVien.getText().trim();
+		String cccd = txtCanCuoc.getText().trim();
+		String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
+		String matKhau = txtMatKhau.getText().trim();
+		String chucVu = txtChucVu.getSelectedItem().toString();
 
-	    String error;
+		String error;
 
-	    error = KiemTraNhap.validateID(maNV);
-	    if (error != null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-	        txtMaNhanVien.requestFocus();
-	        return;
-	    }
+		error = KiemTraNhap.validateID(maNV);
+		if (error != null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+			txtMaNhanVien.requestFocus();
+			return;
+		}
 
-	    error = KiemTraNhap.validateName(hoTen);
-	    if (error != null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-	        txtTenNhanVien.requestFocus();
-	        return;
-	    }
+		error = KiemTraNhap.validateName(hoTen);
+		if (error != null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+			txtTenNhanVien.requestFocus();
+			return;
+		}
 
-	    error = KiemTraNhap.validateEmail(email);
-	    if (error != null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-	        txtEmailNhanVien.requestFocus();
-	        return;
-	    }
+		error = KiemTraNhap.validateEmail(email);
+		if (error != null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+			txtEmailNhanVien.requestFocus();
+			return;
+		}
 
-	    error = KiemTraNhap.validateCCCD(cccd);
-	    if (error != null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-	        txtCanCuoc.requestFocus();
-	        return;
-	    }
+		error = KiemTraNhap.validateCCCD(cccd);
+		if (error != null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+			txtCanCuoc.requestFocus();
+			return;
+		}
 
-	    error = KiemTraNhap.validatePassword(matKhau);
-	    if (error != null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
-	        txtMatKhau.requestFocus();
-	        return;
-	    }
+		error = KiemTraNhap.validatePassword(matKhau);
+		if (error != null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: " + error);
+			txtMatKhau.requestFocus();
+			return;
+		}
 
-	    if (nhanVienDAO.isDuplicateCCCD(cccd, maNV)) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
-	        txtCanCuoc.requestFocus();
-	        return;
-	    }
+		if (nhanVienDAO.isDuplicateCCCD(cccd, maNV)) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this,
+					"Error: Căn cước đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+			txtCanCuoc.requestFocus();
+			return;
+		}
 
-	    if (isDuplicateEmail(email, maNV)) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
-	        txtEmailNhanVien.requestFocus();
-	        return;
-	    }
+		if (isDuplicateEmail(email, maNV)) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this,
+					"Error: Email đã tồn tại! Vui lòng kiểm tra lại thông tin.");
+			txtEmailNhanVien.requestFocus();
+			return;
+		}
 
-	    Date ngaySinh = txtNgaySinhNhanVien.getDate();
-	    if (ngaySinh == null) {
-	        JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this, "Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
-	        txtNgaySinhNhanVien.requestFocus();
-	        return;
-	    }
+		Date ngaySinh = txtNgaySinhNhanVien.getDate();
+		if (ngaySinh == null) {
+			JOptionPane.showMessageDialog(FrameQuanLyNhanVien.this,
+					"Error: Ngày sinh không hợp lệ! Vui lòng chọn ngày sinh.");
+			txtNgaySinhNhanVien.requestFocus();
+			return;
+		}
 
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	    String ngaySinhStr = sdf.format(ngaySinh);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String ngaySinhStr = sdf.format(ngaySinh);
 
-	    nhanVienDAO.saveNhanVien(true, maNV, hoTen, ngaySinhStr, email, gioiTinh, cccd, matKhau, chucVu);
-	    loadDataToTable();
-	    clearFields();
+		nhanVienDAO.saveNhanVien(true, maNV, hoTen, ngaySinhStr, email, gioiTinh, cccd, matKhau, chucVu);
+		loadDataToTable();
+		clearFields();
 	}
-	
+
 	// Sự kiện nút Xóa
-   private void btnXoaActionPerformed() {
-       int selectedRow = tableNhanVien.getSelectedRow();
-       if (selectedRow < 0) {
-           JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần xóa!");
-           return;
-       }
+	private void btnXoaActionPerformed() {
+		int selectedRow = tableNhanVien.getSelectedRow();
+		if (selectedRow < 0) {
+			JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần xóa!");
+			return;
+		}
 
-       int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa nhân viên này?", "Xác nhận xóa",
-               JOptionPane.YES_NO_OPTION);
+		int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa nhân viên này?", "Xác nhận xóa",
+				JOptionPane.YES_NO_OPTION);
 
-       if (confirm == JOptionPane.YES_OPTION) {
-           String maNV = tableModel.getValueAt(selectedRow, 0).toString();
-           nhanVienDAO.deleteNhanVien(maNV);
-           loadDataToTable();
-           clearFields();
-       }
-   }
+		if (confirm == JOptionPane.YES_OPTION) {
+			String maNV = tableModel.getValueAt(selectedRow, 0).toString();
+			nhanVienDAO.deleteNhanVien(maNV);
+			loadDataToTable();
+			clearFields();
+		}
+	}
 
-   // Sự kiện nút Tìm kiếm
+	// Sự kiện nút Tìm kiếm
 
-   private void btnTimActionPerformed() {
-       String maNV = txtMaNhanVienTim.getText().trim();
-       String hoTen = txtTenNhanVienTim.getText().trim();
-       String cccd = txtCanCuocTim.getText().trim();
-       String gioiTinh = txtGioiTinhTim.getSelectedItem().toString();
 
-       List<Object[]> data = nhanVienDAO.searchNhanVien(maNV, hoTen, cccd, gioiTinh);
-       tableModel.setRowCount(0);
-       for (Object[] row : data) {
-           tableModel.addRow(row);
-       }
-   }
+
+	private void btnTimActionPerformed() {
+	    String maNV = txtMaNhanVienTim.getText().trim();
+	    String hoTen = txtTenNhanVienTim.getText().trim();
+	    String cccd = txtCanCuocTim.getText().trim();
+	    String gioiTinh = txtGioiTinhTim.getSelectedItem().toString().trim(); // Retrieve selected gender
+	
+	    // Print the selected gender to the console
+	    System.out.println("Selected gender: " + gioiTinh);
+	
+	    List<Object[]> data = nhanVienDAO.searchNhanVien(maNV, hoTen, cccd, gioiTinh);
+	    tableModel.setRowCount(0);
+	    for (Object[] row : data) {
+	        tableModel.addRow(row);
+	    }
+	}
+
+
 
 // Sự kiện nút Tải lại
 	private void btnTaiLaiActionPerformed() {
@@ -360,7 +362,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 // Phương thức hỗ trợ xóa trắng form
 	private void clearFields() {
 		txtMaNhanVien.setText("");
-	    txtMaNhanVien.setEditable(true);
+		txtMaNhanVien.setEditable(true);
 
 		txtTenNhanVien.setText("");
 		txtEmailNhanVien.setText("");
@@ -398,7 +400,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 	/**
 	 * Create the frame.
 	 */
-	@SuppressWarnings("serial")
+	@SuppressWarnings({ "serial", "rawtypes", "unchecked" })
 	public FrameQuanLyNhanVien() {
 		setLayout(null);
 
@@ -410,7 +412,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		pnlBackGround.setLayout(null);
 
 		JPanel panel = new JPanel();
-		panel.setBounds(0, 284, 1538, 89);
+		panel.setBounds(0, 284, 1538, 74);
 		panel.setBackground(new Color(242, 132, 123));
 		pnlBackGround.add(panel);
 		panel.setLayout(null);
@@ -420,7 +422,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		btnSa.setForeground(new Color(0, 0, 0));
 		btnSa.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnSa.setBackground(new Color(167, 62, 20));
-		btnSa.setBounds(372, 13, 177, 65);
+		btnSa.setBounds(372, 13, 177, 50);
 		panel.add(btnSa);
 
 		JButton btnXa = new JButton("Xóa");
@@ -428,15 +430,15 @@ public class FrameQuanLyNhanVien extends JPanel {
 		btnXa.setForeground(new Color(0, 0, 0));
 		btnXa.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnXa.setBackground(new Color(167, 62, 20));
-		btnXa.setBounds(695, 13, 177, 65);
+		btnXa.setBounds(695, 13, 177, 50);
 		panel.add(btnXa);
 
 		JButton btnHy = new JButton("Hủy");
-		btnHy.setIcon(new ImageIcon("icon\\btnXoa.png"));
+		btnHy.setIcon(new ImageIcon("icon\\btnCancel.png"));
 		btnHy.setForeground(new Color(0, 0, 0));
 		btnHy.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnHy.setBackground(new Color(167, 62, 20));
-		btnHy.setBounds(1001, 13, 177, 65);
+		btnHy.setBounds(1001, 13, 177, 50);
 		panel.add(btnHy);
 
 		JButton btnXuat = new JButton("Xuất");
@@ -444,11 +446,11 @@ public class FrameQuanLyNhanVien extends JPanel {
 		btnXuat.setForeground(new Color(0, 0, 0));
 		btnXuat.setFont(new Font("Tahoma", Font.BOLD, 18));
 		btnXuat.setBackground(new Color(167, 62, 20));
-		btnXuat.setBounds(1318, 13, 177, 65);
+		btnXuat.setBounds(1318, 13, 177, 50);
 		panel.add(btnXuat);
 
 		JButton btnLu = new JButton("Thêm");
-		btnLu.setBounds(61, 13, 177, 65);
+		btnLu.setBounds(61, 13, 177, 50);
 		panel.add(btnLu);
 		btnLu.setIcon(new ImageIcon("icon\\btnThem.png"));
 		btnLu.setForeground(new Color(0, 0, 0));
@@ -501,18 +503,16 @@ public class FrameQuanLyNhanVien extends JPanel {
 		txtMaNhanVien.setBounds(225, 31, 317, 43);
 		pnlBackGround.add(txtMaNhanVien);
 		txtMaNhanVien.setColumns(10);
-		//Auto uppercase
+		// Auto uppercase
 
 		txtMaNhanVien.addKeyListener(new KeyAdapter() {
-		    @Override
-		    public void keyReleased(KeyEvent e) {
-		        String text = txtMaNhanVien.getText();
-		        txtMaNhanVien.setText(text.toUpperCase());
-		    }
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String text = txtMaNhanVien.getText();
+				txtMaNhanVien.setText(text.toUpperCase());
+			}
 		});
 
-		
-		
 		txtTenNhanVien = new JTextField();
 		txtTenNhanVien.setFont(new Font("Dialog", Font.PLAIN, 18));
 		txtTenNhanVien.setColumns(10);
@@ -532,7 +532,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		pnlBackGround.add(txtEmailNhanVien);
 
 		txtChucVu = new JComboBox<>();
-		txtChucVu.setModel(new DefaultComboBoxModel<>(new String[] { "Quản lý", "Nhân viên" })); 
+		txtChucVu.setModel(new DefaultComboBoxModel<>(new String[] { "Quản lý", "Nhân viên" }));
 		txtChucVu.setBounds(800, 218, 259, 43);
 		txtChucVu.setFont(new Font("Dialog", Font.PLAIN, 18)); //
 		pnlBackGround.add(txtChucVu);
@@ -550,19 +550,18 @@ public class FrameQuanLyNhanVien extends JPanel {
 		txtNgaySinhNhanVien.getDateEditor().getUiComponent().setFont(new Font("Dialog", Font.PLAIN, 18));
 
 		JLabel logoMTP = new JLabel("");
-		logoMTP.setIcon(new ImageIcon("C:\\Users\\Admin\\Desktop\\WorkSpace\\Java_Workspace\\Nam3\\MTP\\mtp\\image\\logoMTP 1.png"));
+		logoMTP.setIcon(new ImageIcon("image\\logoMTP 1.png"));
 		logoMTP.setBounds(1052, 10, 360, 214);
 		pnlBackGround.add(logoMTP);
 
 		JScrollPane scrollPaneNhanVien = new JScrollPane();
-		scrollPaneNhanVien.setBounds(10, 383, 1125, 362);
+		scrollPaneNhanVien.setBounds(10, 368, 1125, 377);
 		pnlBackGround.add(scrollPaneNhanVien);
 
 		tableNhanVien = new JTable();
 		tableNhanVien.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tableNhanVien.setModel(new DefaultTableModel(new Object[][] {},
-				new String[] { "Mã nhân viên", "Họ tên", "Giới tính",
-						"Email", "Ngày sinh", "CCCD", "Mật khẩu", "Chức vụ" }) {
+		tableNhanVien.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Mã nhân viên", "Họ tên",
+				"Giới tính", "Email", "Ngày sinh", "CCCD", "Mật khẩu", "Chức vụ" }) {
 			Class[] columnTypes = new Class[] { String.class, String.class, String.class, String.class, String.class,
 					Integer.class, String.class, String.class };
 
@@ -584,15 +583,15 @@ public class FrameQuanLyNhanVien extends JPanel {
 		for (int i = 0; i < tableNhanVien.getColumnCount(); i++) {
 			tableNhanVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 		}
-		txtGioiTinhTim = new JComboBox();
-		txtGioiTinhTim.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		txtGioiTinhTim.setModel(new DefaultComboBoxModel(new String[] { "Nam", "Nữ" }));
-		txtGioiTinhTim.setBounds(800, 27, 148, 36);
-		pnlBackGround.add(txtGioiTinhTim);
+		txtGioiTinh = new JComboBox();
+		txtGioiTinh.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		txtGioiTinh.setModel(new DefaultComboBoxModel(new String[] { "Nam", "Nữ" }));
+		txtGioiTinh.setBounds(800, 27, 148, 36);
+		pnlBackGround.add(txtGioiTinh);
 
 		JPanel pnlTacVu = new JPanel();
 		pnlTacVu.setBackground(new Color(242, 132, 123));
-		pnlTacVu.setBounds(1145, 383, 383, 362);
+		pnlTacVu.setBounds(1145, 368, 383, 377);
 		pnlBackGround.add(pnlTacVu);
 		pnlTacVu.setLayout(null);
 		TitledBorder titledBorder = BorderFactory.createTitledBorder("Tác vụ");
@@ -634,7 +633,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		txtCanCuocTim.setBounds(168, 172, 198, 31);
 		pnlTacVu.add(txtCanCuocTim);
 
-		JComboBox txtGioiTinhTim = new JComboBox();
+		txtGioiTinhTim = new JComboBox();
 		txtGioiTinhTim.setFont(new Font("Tahoma", Font.BOLD, 16));
 		txtGioiTinhTim.setModel(new DefaultComboBoxModel(new String[] { "Nam", "Nữ" }));
 		txtGioiTinhTim.setBounds(168, 228, 115, 34);
@@ -661,33 +660,33 @@ public class FrameQuanLyNhanVien extends JPanel {
 		btnXa.addActionListener(e -> btnXoaActionPerformed());
 		btnTim.addActionListener(e -> btnTimActionPerformed());
 		btnTaiLai_1_1.addActionListener(e -> btnTaiLaiActionPerformed());
-		
-		tableNhanVien.addMouseListener(new java.awt.event.MouseAdapter() {
-		    @Override
-		    public void mouseClicked(java.awt.event.MouseEvent evt) {
-		        int selectedRow = tableNhanVien.getSelectedRow();
-		        if (selectedRow >= 0) {
-		            txtMaNhanVien.setText(tableModel.getValueAt(selectedRow, 0).toString());
-		            txtMaNhanVien.setEditable(false);
 
-		            txtTenNhanVien.setText(tableModel.getValueAt(selectedRow, 1).toString());
-		            txtGioiTinhTim.setSelectedItem(tableModel.getValueAt(selectedRow, 2).toString());
-		            txtEmailNhanVien.setText(tableModel.getValueAt(selectedRow, 3).toString());
-		            try {
-		                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		                Date ngaySinh = sdf.parse(tableModel.getValueAt(selectedRow, 4).toString());
-		                txtNgaySinhNhanVien.setDate(ngaySinh);
-		            } catch (Exception e) {
-		                e.printStackTrace();
-		                JOptionPane.showMessageDialog(null, "Lỗi định dạng ngày sinh!");
-		            }
-		            txtCanCuoc.setText(tableModel.getValueAt(selectedRow, 5).toString());
-		            txtMatKhau.setText(tableModel.getValueAt(selectedRow, 6).toString());
-		            txtChucVu.setSelectedItem(tableModel.getValueAt(selectedRow, 7).toString());
-		        }
-		    }
+		tableNhanVien.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				int selectedRow = tableNhanVien.getSelectedRow();
+				if (selectedRow >= 0) {
+					txtMaNhanVien.setText(tableModel.getValueAt(selectedRow, 0).toString());
+					txtMaNhanVien.setEditable(false);
+
+					txtTenNhanVien.setText(tableModel.getValueAt(selectedRow, 1).toString());
+					txtGioiTinh.setSelectedItem(tableModel.getValueAt(selectedRow, 2).toString());
+					txtEmailNhanVien.setText(tableModel.getValueAt(selectedRow, 3).toString());
+					try {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						Date ngaySinh = sdf.parse(tableModel.getValueAt(selectedRow, 4).toString());
+						txtNgaySinhNhanVien.setDate(ngaySinh);
+					} catch (Exception e) {
+						e.printStackTrace();
+						JOptionPane.showMessageDialog(null, "Lỗi định dạng ngày sinh!");
+					}
+					txtCanCuoc.setText(tableModel.getValueAt(selectedRow, 5).toString());
+					txtMatKhau.setText(tableModel.getValueAt(selectedRow, 6).toString());
+					txtChucVu.setSelectedItem(tableModel.getValueAt(selectedRow, 7).toString());
+				}
+			}
 		});
-		
+
 		// Load dữ liệu ban đầu
 		loadDataToTable();
 	}
