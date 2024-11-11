@@ -33,10 +33,13 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -67,6 +70,9 @@ public class FrameQuanLyChiTietHoaDon extends JPanel implements ActionListener {
     private JComboBox<String> txtMaNV;
     private NhanVienDAO nhanVienDAO;
     private SanPhamDAO sanPhamDAO = new SanPhamDAO();
+    public static final int NO_SUCH_PAGE = 1;
+    public static final int PAGE_EXISTS = 0;
+
     /**
      * Launch the application.
      */
@@ -421,7 +427,7 @@ tableSanPham.addMouseListener(new MouseAdapter() {
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		if (o.equals(btnIn)) {
-
+			printInvoice();
 		}
 		if (o.equals(btnLuu)) {
 			 if (validateMaHD()) {
@@ -540,6 +546,50 @@ try (Connection connection = ConnectDB.getConnection("DB_QLBH");
     e.printStackTrace();
     JOptionPane.showMessageDialog(null, "Lỗi khi lưu hóa đơn và chi tiết hóa đơn!");
 }
+}
+private void printInvoice() {
+    PrinterJob job = PrinterJob.getPrinterJob();
+    job.setPrintable((graphics, pageFormat, pageIndex) -> {
+        if (pageIndex > 0) {
+            return NO_SUCH_PAGE;
+        }
+
+        // Print the header
+        graphics.drawString("Invoice", 100, 100);
+        graphics.drawString("Invoice ID: " + txtMaHD.getText(), 100, 120);
+        graphics.drawString("Customer: " + txtTenKH.getSelectedItem().toString(), 100, 140);
+        graphics.drawString("Employee: " + txtTenNV.getSelectedItem().toString(), 100, 160);
+        graphics.drawString("Date: " + new java.sql.Date(new Date().getTime()), 100, 180);
+
+        // Print the table
+        JTable table = tableChiTiet;
+        TableModel model = table.getModel();
+        int y = 200;
+        for (int i = 0; i < model.getRowCount(); i++) {
+//            for (int j = 0; j < model.getColumnCount(); j++) {
+//                
+//            }
+            graphics.drawString(model.getValueAt(i, 0).toString(), 100, y);
+            graphics.drawString(model.getValueAt(i, 1).toString(), 200, y);
+            graphics.drawString(model.getValueAt(i, 3).toString(), 350, y);
+            graphics.drawString(model.getValueAt(i, 4).toString(), 480, y);
+            y += 20;
+        }
+
+        // Print the total amount
+        graphics.drawString("Total: " + txtTongTien.getText(), 100, y + 20);
+
+        return PAGE_EXISTS;
+    });
+
+    boolean doPrint = job.printDialog();
+    if (doPrint) {
+        try {
+            job.print();
+        } catch (PrinterException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 }
