@@ -7,12 +7,6 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -20,6 +14,10 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import com.toedter.calendar.JDateChooser;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -27,100 +25,80 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import com.toedter.calendar.JDateChooser;
-
-import connect.ConnectDB;
-
-public class FrameThongKeDoanhThu extends JFrame {
+public class FrameThongKeDoanhThu extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JComboBox<String> cbLoaiThongKe;
     private JDateChooser dateChooserFrom, dateChooserTo;
-    private JComboBox<String> cbMonthFrom, cbMonthTo, cbYear, cbYearForQuarter;
+    private JLabel lblTongSanPham, lblTongKhachHang, lblTongNhanVien;
     private JPanel chartPanel;
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                FrameThongKeDoanhThu frame = new FrameThongKeDoanhThu();
-                frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                	FrameThongKeDoanhThu frame = new FrameThongKeDoanhThu();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
 
     public FrameThongKeDoanhThu() {
-        setTitle("Thống kê doanh thu");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(true);
-
+    	setLayout(null);
+    	
         contentPane = new JPanel();
-        contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        setContentPane(contentPane);
+        contentPane.setBounds(10, 10, 1542, 767);
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        add(contentPane);
 
         initComponents();
-
-        setLocationRelativeTo(null);
     }
 
     private void initComponents() {
         contentPane.setLayout(null);
 
         // Title
-        JLabel title = new JLabel("Thống kê doanh thu", JLabel.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 24));
-        title.setBounds(332, 10, 580, 30);
+        JLabel title = new JLabel("Thống kê doanh số", JLabel.CENTER);
+        title.setFont(new Font("Times New Roman", Font.BOLD, 30));
+        title.setBounds(754, 0, 603, 42);
         contentPane.add(title);
 
         // Control panel components
         JLabel lblLoaiThongKe = new JLabel("Lựa chọn loại thống kê");
-        lblLoaiThongKe.setFont(new Font("Tahoma", Font.BOLD, 10));
-        lblLoaiThongKe.setBounds(10, 50, 200, 20);
+        lblLoaiThongKe.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        lblLoaiThongKe.setBounds(10, 53, 376, 44);
         contentPane.add(lblLoaiThongKe);
 
         cbLoaiThongKe = new JComboBox<>(new String[]{
-            "Thống kê doanh thu theo ngày",
-            "Thống kê doanh thu theo tháng",
-            "Thống kê doanh thu theo quý"
+            "Thống kê doanh số 8 ngày gần nhất",
+            "Thống kê số lượng sản phẩm bán ra",
+            "Thống kê sản phẩm do nhân viên bán ra"
         });
-        cbLoaiThongKe.setBounds(10, 80, 200, 20);
+        cbLoaiThongKe.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        cbLoaiThongKe.setBounds(10, 133, 451, 39);
         cbLoaiThongKe.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateChartTitle();
-                updateControlVisibility();
             }
         });
         contentPane.add(cbLoaiThongKe);
 
         // Date panel and button
         dateChooserFrom = new JDateChooser();
-        dateChooserFrom.setBounds(10, 124, 200, 20);
+        dateChooserFrom.setBounds(10, 300, 200, 39);
         contentPane.add(dateChooserFrom);
 
         dateChooserTo = new JDateChooser();
-        dateChooserTo.setBounds(10, 157, 200, 20);
+        dateChooserTo.setBounds(261, 300, 200, 39);
         contentPane.add(dateChooserTo);
 
-        cbMonthFrom = new JComboBox<>(getMonths());
-        cbMonthFrom.setBounds(10, 227, 100, 20);
-        contentPane.add(cbMonthFrom);
-
-        cbMonthTo = new JComboBox<>(getMonths());
-        cbMonthTo.setBounds(120, 227, 100, 20);
-        contentPane.add(cbMonthTo);
-
-        cbYear = new JComboBox<>(getYears());
-        cbYear.setBounds(10, 314, 100, 20);
-        contentPane.add(cbYear);
-
-        cbYearForQuarter = new JComboBox<>(getYears());
-        cbYearForQuarter.setBounds(10, 347, 100, 20);
-        contentPane.add(cbYearForQuarter);
-
-        JButton btnThongKe = new JButton("Thống kê");
-        btnThongKe.setBounds(54, 407, 100, 20);
+        JButton btnThongKe = new JButton("Hiển thị");
+        btnThongKe.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        btnThongKe.setBounds(172, 380, 139, 39);
         btnThongKe.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 capNhatThongKe();
@@ -128,25 +106,40 @@ public class FrameThongKeDoanhThu extends JFrame {
         });
         contentPane.add(btnThongKe);
 
+        // Labels for summary
+        lblTongSanPham = new JLabel("Tổng sản phẩm: 0");
+        lblTongSanPham.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 25));
+        lblTongSanPham.setBounds(59, 446, 252, 66);
+        contentPane.add(lblTongSanPham);
+
+        lblTongKhachHang = new JLabel("Tổng khách hàng: 0");
+        lblTongKhachHang.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 25));
+        lblTongKhachHang.setBounds(59, 522, 252, 77);
+        contentPane.add(lblTongKhachHang);
+
+        lblTongNhanVien = new JLabel("Tổng nhân viên: 0");
+        lblTongNhanVien.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 25));
+        lblTongNhanVien.setBounds(59, 620, 252, 56);
+        contentPane.add(lblTongNhanVien);
+
         // Chart panel
         chartPanel = new JPanel();
         chartPanel.setBorder(BorderFactory.createTitledBorder("Thống kê doanh thu"));
         chartPanel.setBackground(Color.WHITE);
-        chartPanel.setBounds(220, 50, 923, 597);
+        chartPanel.setBounds(500, 53, 996, 676);
         contentPane.add(chartPanel);
         
-        JLabel lblNewLabel = new JLabel("Khoảng ngày:");
-        lblNewLabel.setBounds(10, 110, 77, 13);
-        contentPane.add(lblNewLabel);
+        JLabel lblNgayThongKe = new JLabel("Ngày thống kê");
+        lblNgayThongKe.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        lblNgayThongKe.setBounds(10, 222, 200, 39);
+        contentPane.add(lblNgayThongKe);
 
         // Set kích thước cho JFrame
-        setSize(1171, 762);
-        setPreferredSize(new Dimension(620, 370));
+        setSize(998, 604);
+        setPreferredSize(new Dimension(1528, 759));
         setMinimumSize(new Dimension(620, 370));
         revalidate();
         repaint();
-
-        updateControlVisibility();
     }
 
     private void updateChartTitle() {
@@ -156,134 +149,41 @@ public class FrameThongKeDoanhThu extends JFrame {
         chartPanel.repaint();
     }
 
-    private void updateControlVisibility() {
+    private void capNhatThongKe() {
         String loaiThongKe = (String) cbLoaiThongKe.getSelectedItem();
-        boolean isDay = loaiThongKe.equals("Thống kê doanh thu theo ngày");
-        boolean isMonth = loaiThongKe.equals("Thống kê doanh thu theo tháng");
-        boolean isQuarter = loaiThongKe.equals("Thống kê doanh thu theo quý");
+        String fromDate = ((JTextField) dateChooserFrom.getDateEditor().getUiComponent()).getText();
+        String toDate = ((JTextField) dateChooserTo.getDateEditor().getUiComponent()).getText();
 
-        dateChooserFrom.setVisible(isDay);
-        dateChooserTo.setVisible(isDay);
-        cbMonthFrom.setVisible(isMonth);
-        cbMonthTo.setVisible(isMonth);
-        cbYear.setVisible(isMonth);
-        cbYearForQuarter.setVisible(isQuarter);
-    }
-
-
-
-
-
-
-
-	private void capNhatThongKe() {
-	    String loaiThongKe = (String) cbLoaiThongKe.getSelectedItem();
-	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	    SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy");
-	
-	    try {
-	        Connection connection = ConnectDB.getConnection("DB_QLBH");
-	        Statement statement = connection.createStatement();
-	        ResultSet resultSet = null;
-	
-	        if (loaiThongKe.equals("Thống kê doanh thu theo ngày")) {
-	            String fromDate = dateChooserFrom.getDate() != null ? dateFormat.format(dateChooserFrom.getDate()) : "";
-	            String toDate = dateChooserTo.getDate() != null ? dateFormat.format(dateChooserTo.getDate()) : "";
-	
-	            String query = "SELECT HoaDon.NgayLap, SUM(ChiTietHD.SoLuongSanPham * ChiTietHD.DonGia) AS DoanhThu " +
-	                           "FROM ChiTietHD " +
-	                           "JOIN HoaDon ON ChiTietHD.MaHD = HoaDon.MaHD " +
-	                           "WHERE HoaDon.NgayLap BETWEEN '" + fromDate + "' AND '" + toDate + "' " +
-	                           "GROUP BY HoaDon.NgayLap";
-	            resultSet = statement.executeQuery(query);
-	
-	            while (resultSet.next()) {
-	                int doanhThu = resultSet.getInt("DoanhThu");
-	                Date ngayLap = resultSet.getDate("NgayLap");
-	                dataset.addValue((Number) doanhThu, "Doanh thu", displayFormat.format(ngayLap));
-	            }
-	
-	        } else if (loaiThongKe.equals("Thống kê doanh thu theo tháng")) {
-	            String monthFrom = (String) cbMonthFrom.getSelectedItem();
-	            String monthTo = (String) cbMonthTo.getSelectedItem();
-	            String year = (String) cbYear.getSelectedItem();
-	            String query = "SELECT MONTH(HoaDon.NgayLap) AS Thang, SUM(ChiTietHD.SoLuongSanPham * ChiTietHD.DonGia) AS DoanhThu " +
-	                           "FROM ChiTietHD " +
-	                           "JOIN HoaDon ON ChiTietHD.MaHD = HoaDon.MaHD " +
-	                           "WHERE YEAR(HoaDon.NgayLap) = '" + year + "' AND MONTH(HoaDon.NgayLap) BETWEEN '" + monthFrom + "' AND '" + monthTo + "' " +
-	                           "GROUP BY MONTH(HoaDon.NgayLap)";
-	            resultSet = statement.executeQuery(query);
-	
-	            while (resultSet.next()) {
-	                int thang = resultSet.getInt("Thang");
-	                int doanhThu = resultSet.getInt("DoanhThu");
-	                dataset.addValue((Number) doanhThu, "Doanh thu", thang);
-	            }
-	
-	        } else if (loaiThongKe.equals("Thống kê doanh thu theo quý")) {
-	            String year = (String) cbYearForQuarter.getSelectedItem();
-	            String query = "SELECT CASE " +
-	                           "WHEN DATEPART(MONTH, HoaDon.NgayLap) IN (1, 2, 3) THEN 1 " +
-	                           "WHEN DATEPART(MONTH, HoaDon.NgayLap) IN (4, 5, 6) THEN 2 " +
-	                           "WHEN DATEPART(MONTH, HoaDon.NgayLap) IN (7, 8, 9) THEN 3 " +
-	                           "ELSE 4 END AS Quy, " +
-	                           "SUM(ChiTietHD.SoLuongSanPham * ChiTietHD.DonGia) AS DoanhThu " +
-	                           "FROM ChiTietHD " +
-	                           "JOIN HoaDon ON ChiTietHD.MaHD = HoaDon.MaHD " +
-	                           "WHERE YEAR(HoaDon.NgayLap) = '" + year + "' " +
-	                           "GROUP BY CASE " +
-	                           "WHEN DATEPART(MONTH, HoaDon.NgayLap) IN (1, 2, 3) THEN 1 " +
-	                           "WHEN DATEPART(MONTH, HoaDon.NgayLap) IN (4, 5, 6) THEN 2 " +
-	                           "WHEN DATEPART(MONTH, HoaDon.NgayLap) IN (7, 8, 9) THEN 3 " +
-	                           "ELSE 4 END";
-	            resultSet = statement.executeQuery(query);
-	
-	            while (resultSet.next()) {
-	                int quy = resultSet.getInt("Quy");
-	                int doanhThu = resultSet.getInt("DoanhThu");
-	                dataset.addValue((Number) doanhThu, "Doanh thu", "Quý " + quy);
-	            }
-	        }
-	
-	        JFreeChart barChart = ChartFactory.createBarChart(
-	                loaiThongKe,
-	                loaiThongKe.equals("Thống kê doanh thu theo ngày") ? "Ngày" :
-	                loaiThongKe.equals("Thống kê doanh thu theo tháng") ? "Tháng" : "Quý",
-	                "Doanh thu",
-	                dataset,
-	                PlotOrientation.VERTICAL,
-	                false, true, false);
-	
-	        ChartPanel chartPanelContainer = new ChartPanel(barChart);
-	        chartPanelContainer.setPreferredSize(new Dimension(800, 400));
-	        chartPanel.removeAll();
-	        chartPanel.add(chartPanelContainer);
-	        chartPanel.revalidate();
-	        chartPanel.repaint();
-	
-	        ConnectDB.closeConnection();
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	}
-
-    private String[] getMonths() {
-        String[] months = new String[12];
-        for (int i = 1; i <= 12; i++) {
-            months[i - 1] = String.valueOf(i);
+        // Update chart based on selected options
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        if (loaiThongKe.equals("Thống kê doanh số 8 ngày gần nhất")) {
+            dataset.addValue(100, "Doanh thu", "Day 1");
+            dataset.addValue(150, "Doanh thu", "Day 2");
+            dataset.addValue(200, "Doanh thu", "Day 3");
+            dataset.addValue(250, "Doanh thu", "Day 4");
+            dataset.addValue(300, "Doanh thu", "Day 5");
+            dataset.addValue(350, "Doanh thu", "Day 6");
+            dataset.addValue(400, "Doanh thu", "Day 7");
+            dataset.addValue(450, "Doanh thu", "Day 8");
+        } else if (loaiThongKe.equals("Thống kê số lượng sản phẩm bán ra")) {
+            // Add data for product sales statistics
+        } else if (loaiThongKe.equals("Thống kê sản phẩm do nhân viên bán ra")) {
+            // Add data for employee sales statistics
         }
-        return months;
-    }
 
-    private String[] getYears() {
-        String[] years = new String[10];
-        int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
-        for (int i = 0; i < 10; i++) {
-            years[i] = String.valueOf(currentYear - i);
-        }
-        return years;
+        JFreeChart barChart = ChartFactory.createBarChart(
+                loaiThongKe,
+                "Ngày",
+                "Doanh thu",
+                dataset,
+                PlotOrientation.VERTICAL,
+                false, true, false);
+
+        ChartPanel chartPanelContainer = new ChartPanel(barChart);
+        chartPanelContainer.setPreferredSize(new Dimension(800, 400));
+        chartPanel.removeAll();
+        chartPanel.add(chartPanelContainer);
+        chartPanel.revalidate();
+        chartPanel.repaint();
     }
 }
