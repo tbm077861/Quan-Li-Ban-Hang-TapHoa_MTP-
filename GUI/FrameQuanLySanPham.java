@@ -64,6 +64,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 	private JTextField txtMoTa;
 	private JTextField txtDonGia;
 	private JDateChooser txtNgaySX;
+	private JDateChooser dateTim;
 	private JTable tableSanPham;
 	private JButton btnThem;
 	private JButton btnXoa;
@@ -205,21 +206,25 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		pnlBackGround.add(lblNgaySX);
 		
 		txtMaHang = new JTextField();
+		txtMaHang.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtMaHang.setBounds(176, 33, 258, 40);
 		pnlBackGround.add(txtMaHang);
 		txtMaHang.setColumns(10);
 		
 		txtTenHang = new JTextField();
+		txtTenHang.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtTenHang.setColumns(10);
 		txtTenHang.setBounds(176, 97, 258, 40);
 		pnlBackGround.add(txtTenHang);
 		
 		txtMoTa = new JTextField();
+		txtMoTa.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtMoTa.setColumns(10);
 		txtMoTa.setBounds(176, 158, 258, 40);
 		pnlBackGround.add(txtMoTa);
 		
 		txtDonGia = new JTextField();
+		txtDonGia.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtDonGia.setColumns(10);
 		txtDonGia.setBounds(718, 33, 259, 40);
 		pnlBackGround.add(txtDonGia);
@@ -227,8 +232,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		txtNgaySX = new JDateChooser();
 		txtNgaySX.setBounds(718, 147, 259, 40);
 		pnlBackGround.add(txtNgaySX);
-		
-		// Add PropertyChangeListener to JDateChooser
+	
         txtNgaySX.addPropertyChangeListener("date", new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -251,6 +255,9 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		pnlBackGround.add(scrollPane);
 		
 		tableSanPham = new JTable();
+		JTableHeader header = tableSanPham.getTableHeader();
+        header.setFont(new Font("Arial", Font.BOLD, 18));
+        tableSanPham.setFont(new Font("Arial", Font.PLAIN, 16));
 		tableSanPham.setModel(new DefaultTableModel(
 			new Object[][] {
 				
@@ -259,9 +266,6 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 				"Mã hàng", "Tên hàng", "Mô tả", "Đơn giá ", "Số lượng", "Ngày sản xuất"
 			}
 		) {
-			/**
-			 * 
-			 */
 			private static final long serialVersionUID = 1L;
 			@SuppressWarnings("rawtypes")
 			Class[] columnTypes = new Class[] {
@@ -272,9 +276,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 				return columnTypes[columnIndex];
 			}
 		});
-		JTableHeader header = tableSanPham.getTableHeader();
-        header.setFont(new Font("Arial", Font.BOLD, 18));
-        tableSanPham.setFont(new Font("Arial", Font.PLAIN, 16));
+	
 		scrollPane.setViewportView(tableSanPham);
 		
 		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
@@ -304,6 +306,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		panelTimKiem.add(lblNewLabel);
 		
 		txtMaTim = new JTextField();
+		txtMaTim.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtMaTim.setBounds(186, 45, 136, 25);
 		panelTimKiem.add(txtMaTim);
 		txtMaTim.setColumns(10);
@@ -329,11 +332,13 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		panelTimKiem.add(lblNewLabel_3);
 		
 		txtEnd = new JTextField();
+		txtEnd.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtEnd.setBounds(238, 288, 96, 31);
 		panelTimKiem.add(txtEnd);
 		txtEnd.setColumns(10);
 		
 		txtStart = new JTextField();
+		txtStart.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtStart.setColumns(10);
 		txtStart.setBounds(93, 288, 96, 31);
 		panelTimKiem.add(txtStart);
@@ -352,6 +357,7 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		panelTimKiem.add(lblNewLabel_4);
 		
 		txtTenTim = new JTextField();
+		txtTenTim.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtTenTim.setColumns(10);
 		txtTenTim.setBounds(186, 93, 136, 25);
 		panelTimKiem.add(txtTenTim);
@@ -361,20 +367,25 @@ public class FrameQuanLySanPham extends JPanel implements ActionListener {
 		lblNewLabel_4_1.setBounds(31, 144, 185, 25);
 		panelTimKiem.add(lblNewLabel_4_1);
 		
-		JDateChooser dateChooser = new JDateChooser();
-		dateChooser.setBounds(186, 144, 136, 25);
-		panelTimKiem.add(dateChooser);
+		dateTim = new JDateChooser();
+		dateTim.addPropertyChangeListener("date", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                Date selectedDate = (Date) evt.getNewValue();
+                if (selectedDate != null) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    dateTim.setDateFormatString(dateFormat.toPattern());
+                }
+            }
+        });
+		dateTim.setBounds(186, 144, 136, 25);
+		panelTimKiem.add(dateTim);
 		
 		btnTaiLai = new JButton("Tải lại");
 		btnTaiLai.setFont(new Font("Tahoma", Font.BOLD, 20));
 		btnTaiLai.setBackground(new Color(255, 0, 0));
 		btnTaiLai.setBounds(197, 347, 104, 25);
 		panelTimKiem.add(btnTaiLai);
-
-		
-		//Full Screen
-//		 GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-//		 gd.setFullScreenWindow(this);
 		
 		//Khởi tạo danh sách
 //		txtMaHang.setText(sanPhamDAO.getNextMaHang());
@@ -487,6 +498,9 @@ public void actionPerformed(ActionEvent e) {
 		clearDataToTable();
 		loadDataToTable();
 	}
+	if (btnLoc.equals(o)) {
+		btnLocActionPerformed();
+	}
 }
 
 private void showMessage(String message, JTextField txt) {
@@ -498,7 +512,7 @@ private void showMessage(String message, JTextField txt) {
 private String getFormattedDate(JDateChooser dateChooser) {
  Date date = (Date) dateChooser.getDate();
  if (date != null) {
-     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-dd-MM");
+     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
      return formatter.format(date);
  } else {
      return "";
@@ -701,43 +715,122 @@ private void exportToExcel() {
     }
 }
 //Sự kiện nút tìm kiếm
+
 private void btnTimActionPerformed() {
-	String maHang = txtMaTim.getText().trim();
-	String tenHang = txtTenTim.getText().trim();
-	String ngaySX = getFormattedDate(txtNgaySX);
-	
-	StringBuilder sql = new StringBuilder("SELECT * FROM DanhSachSanPham WHERE 1=1");
-	List<Object> params = new ArrayList<>();
-	
-	if (!maHang.isEmpty()) {
-		sql.append(" AND MaHang LIKE ?");
-		params.add( "%" + maHang + "%");
-	}
-	if (!tenHang.isEmpty()) {
-		sql.append(" AND TenHang LIKE ?");
-		params.add("%" + tenHang + "%");
-	}
-	if (!ngaySX.isEmpty()) {
-		sql.append(" AND NgaySanXuat = ?");
-		params.add(ngaySX);
-	}
-	try (Connection conn = ConnectDB.getConnection("DB_QLBH");
-			PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
-		for (int i = 0; i < params.size(); i++) {
-			pstmt.setObject(i + 1, params.get(i));
-		}
-		try (ResultSet rs = pstmt.executeQuery()) {
-			DefaultTableModel model = (DefaultTableModel) tableSanPham.getModel();
-			model.setRowCount(0);
-			while (rs.next()) {
-				model.addRow(new Object[] { rs.getString("MaHang"), rs.getString("TenHang"), rs.getString("MoTa"),
-						rs.getDouble("DonGia"), rs.getInt("SoLuong"), rs.getString("NgaySanXuat") });
-			}
-		}
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
+    String maHang = txtMaTim.getText().trim();
+    String tenHang = txtTenTim.getText().trim();
+    String ngaySX = getFormattedDate(txtNgaySX);
+    String ngayTim = getFormattedDate(dateTim);
+
+    StringBuilder sql = new StringBuilder("SELECT * FROM DanhSachSanPham WHERE 1=1");
+    List<Object> params = new ArrayList<>();
+
+    if (!maHang.isEmpty()) {
+        sql.append(" AND MaHang LIKE ?");
+        params.add("%" + maHang + "%");
+    }
+    if (!tenHang.isEmpty()) {
+        sql.append(" AND TenHang LIKE ?");
+        params.add("%" + tenHang + "%");
+    }
+    if (!ngaySX.isEmpty()) {
+        sql.append(" AND NgaySanXuat = ?");
+        params.add(ngaySX);
+    }
+    if (!ngayTim.isEmpty()) {
+        sql.append(" AND NgaySanXuat = ?");
+        params.add(ngayTim);
+    }
+
+    try (Connection conn = ConnectDB.getConnection("DB_QLBH");
+         PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+        for (int i = 0; i < params.size(); i++) {
+            pstmt.setObject(i + 1, params.get(i));
+        }
+        try (ResultSet rs = pstmt.executeQuery()) {
+            DefaultTableModel model = (DefaultTableModel) tableSanPham.getModel();
+            model.setRowCount(0);
+            while (rs.next()) {
+                model.addRow(new Object[] {
+                    rs.getString("MaHang"),
+                    rs.getString("TenHang"),
+                    rs.getString("MoTa"),
+                    rs.getDouble("DonGia"),
+                    rs.getInt("SoLuong"),
+                    rs.getString("NgaySanXuat")
+                });
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
 }
+//Phương thức lọc sản phẩm theo giá
+
+private void btnLocActionPerformed() {
+    String maHang = txtMaTim.getText().trim();
+    String tenHang = txtTenTim.getText().trim();
+    String ngaySX = getFormattedDate(txtNgaySX);
+    String ngayTim = getFormattedDate(dateTim);
+    String startPriceStr = txtStart.getText().trim();
+    String endPriceStr = txtEnd.getText().trim();
+
+    StringBuilder sql = new StringBuilder("SELECT * FROM DanhSachSanPham WHERE 1=1");
+    List<Object> params = new ArrayList<>();
+
+    if (!maHang.isEmpty()) {
+        sql.append(" AND MaHang LIKE ?");
+        params.add("%" + maHang + "%");
+    }
+    if (!tenHang.isEmpty()) {
+        sql.append(" AND TenHang LIKE ?");
+        params.add("%" + tenHang + "%");
+    }
+    if (!ngaySX.isEmpty()) {
+        sql.append(" AND NgaySanXuat = ?");
+        params.add(ngaySX);
+    }
+    if (!ngayTim.isEmpty()) {
+        sql.append(" AND NgaySanXuat = ?");
+        params.add(ngayTim);
+    }
+    if (!startPriceStr.isEmpty() && !endPriceStr.isEmpty()) {
+        try {
+            double startPrice = Double.parseDouble(startPriceStr);
+            double endPrice = Double.parseDouble(endPriceStr);
+            sql.append(" AND DonGia BETWEEN ? AND ?");
+            params.add(startPrice);
+            params.add(endPrice);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Giá phải là số hợp lệ");
+            return;
+        }
+    }
+
+    try (Connection conn = ConnectDB.getConnection("DB_QLBH");
+         PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+        for (int i = 0; i < params.size(); i++) {
+            pstmt.setObject(i + 1, params.get(i));
+        }
+        try (ResultSet rs = pstmt.executeQuery()) {
+            DefaultTableModel model = (DefaultTableModel) tableSanPham.getModel();
+            model.setRowCount(0);
+            while (rs.next()) {
+                model.addRow(new Object[] {
+                    rs.getString("MaHang"),
+                    rs.getString("TenHang"),
+                    rs.getString("MoTa"),
+                    rs.getDouble("DonGia"),
+                    rs.getInt("SoLuong"),
+                    rs.getString("NgaySanXuat")
+                });
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
 //Phương thức hỗ trợ xóa trắng form tìm kiếm
 private void clearSearchFields() {
  txtMaTim.setText("");

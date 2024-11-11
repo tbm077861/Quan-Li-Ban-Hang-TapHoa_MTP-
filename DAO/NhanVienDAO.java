@@ -8,11 +8,13 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
-import connect.ConnectDB;
+import connectDB.ConnectDB;
 
 public class NhanVienDAO {
 
@@ -40,7 +42,20 @@ public class NhanVienDAO {
     }
 
 
-
+    public Map<String, String> getNhanVienData() {
+        Map<String, String> nhanVienData = new HashMap<>();
+        String sql = "SELECT MANV, HoTen FROM TaiKhoanNV";
+        try (Connection conn = ConnectDB.getConnection("DB_QLBH");
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                nhanVienData.put(rs.getString("MANV"), rs.getString("HoTen"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return nhanVienData;
+    }
 	public boolean isDuplicateCCCD(String cccd, String maNV) {
 	    String sql = "SELECT COUNT(*) FROM TaiKhoanNV WHERE CCCD = ?";
 	    if (maNV != null) {

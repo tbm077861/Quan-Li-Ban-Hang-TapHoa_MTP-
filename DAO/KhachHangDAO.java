@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -36,7 +38,20 @@ public class KhachHangDAO {
         }
         return data;
     }
-
+    public Map<String, String> getKhachHangData() {
+        Map<String, String> khachHangData = new HashMap<>();
+        String sql = "SELECT maKhachHang, tenKhachHang FROM KhachHang";
+        try (Connection conn = ConnectDB.getConnection("DB_QLBH");
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                khachHangData.put(rs.getString("maKhachHang"), rs.getString("tenKhachHang"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return khachHangData;
+    }
     public boolean isDuplicateDienThoai(String dienThoai, String maKH) {
 	    String sql = "SELECT COUNT(*) FROM KhachHang WHERE dienThoai = ?";
 	    if (maKH != null) {
