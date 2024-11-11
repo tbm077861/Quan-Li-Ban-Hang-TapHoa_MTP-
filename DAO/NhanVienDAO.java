@@ -5,9 +5,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -141,48 +141,61 @@ public class NhanVienDAO {
         }
     }
 
-    public List<Object[]> searchNhanVien(String maNV, String hoTen, String cccd, String gioiTinh) {
-        List<Object[]> data = new ArrayList<>();
-        StringBuilder sql = new StringBuilder(
-                "SELECT MANV, HoTen, GioiTinh, Email, NgaySinh, CCCD, MatKhau, ChucVu FROM TaiKhoanNV WHERE 1=1");
-        List<Object> params = new ArrayList<>();
 
-        if (!maNV.isEmpty()) {
-            sql.append(" AND MANV LIKE ?");
-            params.add("%" + maNV + "%");
-        }
-        if (!hoTen.isEmpty()) {
-            sql.append(" AND HoTen LIKE ?");
-            params.add("%" + hoTen + "%");
-        }
-        if (!cccd.isEmpty()) {
-            sql.append(" AND CCCD LIKE ?");
-            params.add("%" + cccd + "%");
-        }
-        if (!gioiTinh.isEmpty()) {
-            sql.append(" AND GioiTinh = ?");
-            params.add(gioiTinh);
-        }
 
-        try (Connection conn = ConnectDB.getConnection("DB_QLBH");
-             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+	public List<Object[]> searchNhanVien(String maNV, String hoTen, String cccd, String gioiTinh) {
+	    List<Object[]> data = new ArrayList<>();
+	    StringBuilder query = new StringBuilder("SELECT * FROM TaiKhoanNV WHERE 1=1");
+	
+	    if (!maNV.isEmpty()) {
+	        query.append(" AND MANV LIKE ?");
+	    }
+	    if (!hoTen.isEmpty()) {
+	        query.append(" AND HoTen LIKE ?");
+	    }
+	    if (!cccd.isEmpty()) {
+	        query.append(" AND CCCD LIKE ?");
+	    }
+	    if (!gioiTinh.isEmpty()) {
+	        query.append(" AND GioiTinh = ?");
+	    }
+	
+	    try (Connection connection = ConnectDB.getConnection("DB_QLBH");
+	         PreparedStatement pstmt = connection.prepareStatement(query.toString())) {
+	
+	        int paramIndex = 1;
+	        if (!maNV.isEmpty()) {
+	            pstmt.setString(paramIndex++, "%" + maNV + "%");
+	        }
+	        if (!hoTen.isEmpty()) {
+	            pstmt.setString(paramIndex++, "%" + hoTen + "%");
+	        }
+	        if (!cccd.isEmpty()) {
+	            pstmt.setString(paramIndex++, "%" + cccd + "%");
+	        }
+	        if (!gioiTinh.isEmpty()) {
+	            pstmt.setString(paramIndex++, gioiTinh);
+	        }
+	
+	        ResultSet resultSet = pstmt.executeQuery();
+	
+	        while (resultSet.next()) {
+	            Object[] row = new Object[]{
+	                resultSet.getString("MANV"),
+	                resultSet.getString("HoTen"),
+	                resultSet.getString("GioiTinh"),
+	                resultSet.getString("Email"),
+	                resultSet.getString("NgaySinh"),
+	                resultSet.getString("CCCD"),
+	                resultSet.getString("MatKhau"),
+	                resultSet.getString("ChucVu")
+	            };
+	            data.add(row);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return data;
+	}
 
-            for (int i = 0; i < params.size(); i++) {
-                pstmt.setObject(i + 1, params.get(i));
-            }
-
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                Object[] row = { rs.getString("MANV"), rs.getString("HoTen"), rs.getString("GioiTinh"),
-                        rs.getString("Email"), rs.getString("NgaySinh"), rs.getString("CCCD"),
-                        rs.getString("MatKhau"), rs.getString("ChucVu") };
-                data.add(row);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi tìm kiếm: " + e.getMessage());
-        }
-        return data;
-    }
 }
