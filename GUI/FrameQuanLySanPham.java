@@ -29,7 +29,7 @@ import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
 
 import controller.QuanLiSanPham;
-import model.SanPham;
+import entity.SanPham;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -545,7 +545,7 @@ private boolean validateData() {
 
     // Regex to include Vietnamese characters
     String vietnamesePattern = "^[\\p{L}\\s]+$";
-    String reg_mahang = "SP\\d+";
+    String reg_mahang = "MH\\d+";
     if (maHang.isEmpty()) {
         showMessage("Error: Mã hàng không được để trống", txtMaHang);
         return false;
