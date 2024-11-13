@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connectDB.ConnectDB;
-import model.SanPham;
+import entity.SanPham;
 
 public class SanPhamDAO {
     public boolean addSanPhamList(List<SanPham> sanPhamList) {
@@ -71,5 +71,33 @@ public class SanPhamDAO {
             e.printStackTrace();
         }
         return "SP1"; // Default value if no records found
+    }
+    
+    public List<SanPham> searchSanPham(String tenSanPham) {
+        List<SanPham> sanPhamList = new ArrayList<>();
+        String sql = "SELECT * FROM DanhSachSanPham WHERE TenHang LIKE ?";
+
+        try (Connection conn = ConnectDB.getConnection("DB_QLBH");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, "%" + tenSanPham + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+            	String maHang = rs.getString("MaHang");
+                String tenHang = rs.getString("TenHang");
+                String moTa = rs.getString("MoTa");
+                double donGia = rs.getDouble("DonGia");
+                int soLuong = rs.getInt("SoLuong");
+                String ngaySX = rs.getString("NgaySanXuat");
+
+                SanPham sanPham = new SanPham(maHang, tenHang, moTa, donGia, soLuong, ngaySX);
+                sanPhamList.add(sanPham);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return sanPhamList;
     }
 }

@@ -12,6 +12,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -34,7 +35,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
-import connect.ConnectDB;
+import connectDB.*;
 
 public class FrameDangNhap extends JFrame {
     private JLabel lblTitle;
@@ -84,6 +85,7 @@ public class FrameDangNhap extends JFrame {
     }
 
     public FrameDangNhap() {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage("icon\\store.png"));
         setTitle("Quản lý cửa hàng tiện lợi");
         initComponents();
         setVisible(true);

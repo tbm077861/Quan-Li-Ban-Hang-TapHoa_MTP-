@@ -1,4 +1,4 @@
-package quanLyCuaHangTienLoi;
+package connectDB;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,11 +14,11 @@ public class ConnectDB {
         
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            String url = "jdbc:sqlserver://NHAT-TRUONG:1433;" +
+            String url = "jdbc:sqlserver://localhost:1433;" +
                          "databaseName=" + dbName + ";integratedSecurity=true;" +
-                         "encrypt=true;trustServerCertificate=true";
+                         "encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8";
             String userName = "sa";
-            String password = "123456";
+            String password = "sapassword";
             
             connection = DriverManager.getConnection(url, userName, password);
             return connection;

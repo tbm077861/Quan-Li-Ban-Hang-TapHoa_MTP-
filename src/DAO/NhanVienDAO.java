@@ -1,4 +1,3 @@
-
 package DAO;
 
 import java.sql.Connection;
@@ -7,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -199,5 +197,33 @@ public class NhanVienDAO {
             JOptionPane.showMessageDialog(null, "Lỗi khi tìm kiếm: " + e.getMessage());
         }
         return data;
+    }
+    
+    public List<Object[]> getAllNhanVien() {
+        List<Object[]> List = new ArrayList<>();
+        String sql = "SELECT * FROM TaiKhoanNV";
+        try( Connection connection = ConnectDB.getConnection("DB_QLBH");
+        	PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String maNV = resultSet.getString("MANV");
+                String hoTen = resultSet.getString("HoTen");
+                String ngaySinh = resultSet.getString("NgaySinh");
+                String email = resultSet.getString("Email");
+                String gioiTinh = resultSet.getString("GioiTinh");
+                String cccd = resultSet.getString("CCCD");
+//                String matKhau = resultSet.getString("MatKhau");
+                // không lấy mật khẩu
+                String chucVu = resultSet.getString("ChucVu");
+
+                Object[] nv = {maNV, hoTen, ngaySinh, email, gioiTinh, cccd, chucVu};
+                List.add(nv);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return List;
     }
 }

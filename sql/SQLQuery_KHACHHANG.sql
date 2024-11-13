@@ -1,7 +1,7 @@
 USE [DB_QLBH]
 GO
 
-/****** Object:  Table [dbo].[KhachHang]    Script Date: 11/6/2024 5:17:20 PM ******/
+/****** Object:  Table [dbo].[KhachHang]    Script Date: 11/13/2024 8:20:12 PM ******/
 SET ANSI_NULLS ON
 GO
 

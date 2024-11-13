@@ -1,7 +1,7 @@
 USE [DB_QLBH]
 GO
 
-/****** Object:  Table [dbo].[TaiKhoanNV]    Script Date: 11/8/2024 10:45:56 AM ******/
+/****** Object:  Table [dbo].[TaiKhoanNV]    Script Date: 11/13/2024 8:20:20 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -14,7 +14,7 @@ GO
 CREATE TABLE [dbo].[TaiKhoanNV](
 	[MANV] [nvarchar](50) NOT NULL,
 	[HoTen] [nvarchar](100) NOT NULL,
-	[NgaySinh] [varchar](10) NOT NULL,
+	[NgaySinh] [date] NULL,
 	[Email] [varchar](100) NOT NULL,
 	[GioiTinh] [nvarchar](10) NOT NULL,
 	[CCCD] [nvarchar](200) NOT NULL,

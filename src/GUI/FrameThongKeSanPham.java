@@ -1,4 +1,3 @@
-
 package GUI;
 
 import java.awt.Color;
@@ -28,14 +27,16 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import com.toedter.calendar.JDateChooser;
 
-import connect.ConnectDB;
+import connectDB.*;
 
-public class FrameThongKeSanPham extends JFrame {
+public class FrameThongKeSanPham extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JDateChooser dateChooserFrom, dateChooserTo;
     private JPanel chartPanel;
+    private JLabel lblNewLabel;
+    private JLabel lblnNgy;
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
@@ -49,17 +50,16 @@ public class FrameThongKeSanPham extends JFrame {
     }
 
     public FrameThongKeSanPham() {
-        setTitle("Thống kê sản phẩm");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(true);
+    	setLayout(null);
 
         contentPane = new JPanel();
+        contentPane.setBackground(new Color(254, 222, 192));
+        contentPane.setBounds(0, 0, 1542, 767);
         contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        setContentPane(contentPane);
+        add(contentPane);
 
         initComponents();
 
-        setLocationRelativeTo(null);
     }
 
     private void initComponents() {
@@ -68,20 +68,21 @@ public class FrameThongKeSanPham extends JFrame {
         // Title
         JLabel title = new JLabel("Thống kê sản phẩm", JLabel.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
-        title.setBounds(389, 10, 580, 30);
+        title.setBounds(754, 10, 580, 30);
         contentPane.add(title);
 
         // Date panel and button
         dateChooserFrom = new JDateChooser();
-        dateChooserFrom.setBounds(10, 82, 208, 20);
+        dateChooserFrom.setBounds(46, 122, 259, 37);
         contentPane.add(dateChooserFrom);
 
         dateChooserTo = new JDateChooser();
-        dateChooserTo.setBounds(10, 113, 208, 20);
+        dateChooserTo.setBounds(46, 260, 259, 37);
         contentPane.add(dateChooserTo);
 
         JButton btnThongKe = new JButton("Thống kê");
-        btnThongKe.setBounds(38, 162, 120, 38);
+        btnThongKe.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        btnThongKe.setBounds(83, 331, 175, 55);
         btnThongKe.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 capNhatThongKe();
@@ -93,12 +94,22 @@ public class FrameThongKeSanPham extends JFrame {
         chartPanel = new JPanel();
         chartPanel.setBorder(BorderFactory.createTitledBorder("Thống kê lượt mua sản phẩm"));
         chartPanel.setBackground(Color.WHITE);
-        chartPanel.setBounds(220, 50, 878, 531);
+        chartPanel.setBounds(366, 50, 1154, 696);
         contentPane.add(chartPanel);
+        
+        lblNewLabel = new JLabel("Từ Ngày");
+        lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        lblNewLabel.setBounds(46, 68, 150, 47);
+        contentPane.add(lblNewLabel);
+        
+        lblnNgy = new JLabel("Đến Ngày");
+        lblnNgy.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        lblnNgy.setBounds(46, 203, 150, 47);
+        contentPane.add(lblnNgy);
 
         // Set kích thước cho JFrame
         setSize(1176, 640);
-        setPreferredSize(new Dimension(620, 370));
+        setPreferredSize(new Dimension(1535, 768));
         setMinimumSize(new Dimension(620, 370));
         revalidate();
         repaint();

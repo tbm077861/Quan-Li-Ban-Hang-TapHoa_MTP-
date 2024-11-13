@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +30,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -382,6 +390,49 @@ public class FrameQuanLyNhanVien extends JPanel {
 		txtGioiTinhTim.setSelectedIndex(0);
 	}
 
+	
+	// Sự kiện nút Xuất file
+	private void btnXuatFileAction() {
+	    Workbook workbook = new XSSFWorkbook();
+	    Sheet sheet = workbook.createSheet("DanhSachNhanVien");
+
+	    // Create header row
+	    Row headerRow = sheet.createRow(0);
+	    String[] headers = {"Mã nhân viên", "Họ tên", "Ngày Sinh",  "Email", "Giới tính", "CCCD", "Chức vụ"};
+	    for (int i = 0; i < headers.length; i++) {
+	        Cell cell = headerRow.createCell(i);
+	        cell.setCellValue(headers[i]);
+	    }
+
+	    // Populate data rows
+	    List<Object[]> List = nhanVienDAO.getAllNhanVien();
+	    int rowNum = 1;
+	    for (Object[] nv : List) {
+	        Row row = sheet.createRow(rowNum++);
+	        row.createCell(0).setCellValue((String) nv[0]);
+	        row.createCell(1).setCellValue((String) nv[1]);
+	        row.createCell(2).setCellValue((String) nv[2]);
+	        row.createCell(3).setCellValue((String) nv[3]);
+	        row.createCell(4).setCellValue((String) nv[4]);
+	        row.createCell(5).setCellValue((String) nv[5]);
+	        row.createCell(6).setCellValue((String) nv[6]);
+	    }
+
+	    // Write the output to a file
+	    try (FileOutputStream fileOut = new FileOutputStream("DanhSachNhanVien.xlsx")) {
+	        workbook.write(fileOut);
+	        JOptionPane.showMessageDialog(this, "Xuất file Excel thành công");
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(this, "Xuất file Excel thất bại");
+	    } finally {
+	        try {
+	            workbook.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
 	/**
 	 * Launch the application.
 	 */
@@ -442,6 +493,7 @@ public class FrameQuanLyNhanVien extends JPanel {
 		panel.add(btnHy);
 
 		JButton btnXuat = new JButton("Xuất");
+		btnXuat.addActionListener(e -> btnXuatFileAction());
 		btnXuat.setIcon(new ImageIcon("icon\\btnprint.png"));
 		btnXuat.setForeground(new Color(0, 0, 0));
 		btnXuat.setFont(new Font("Tahoma", Font.BOLD, 18));

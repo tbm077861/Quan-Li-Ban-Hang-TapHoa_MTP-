@@ -1,4 +1,4 @@
-package quanLyCuaHangTienLoi;
+package entity;
 
 import java.util.Objects;
 

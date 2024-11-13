@@ -1,7 +1,7 @@
 USE [DB_QLBH]
 GO
 
-/****** Object:  Table [dbo].[HoaDon]    Script Date: 08/11/2024 10:20:52 SA ******/
+/****** Object:  Table [dbo].[HoaDon]    Script Date: 11/13/2024 8:20:03 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -12,12 +12,13 @@ CREATE TABLE [dbo].[HoaDon](
 	[MaHD] [nvarchar](50) NOT NULL,
 	[MANV] [nvarchar](50) NOT NULL,
 	[maKhachHang] [nvarchar](50) NULL,
-	[NgayLap] [nvarchar](50) NULL,
+	[NgayLap] [date] NULL,
  CONSTRAINT [PK_HoaDon] PRIMARY KEY CLUSTERED 
 (
 	[MaHD] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[HoaDon]  WITH CHECK ADD  CONSTRAINT [FK_HoaDon_KhachHang] FOREIGN KEY([maKhachHang])

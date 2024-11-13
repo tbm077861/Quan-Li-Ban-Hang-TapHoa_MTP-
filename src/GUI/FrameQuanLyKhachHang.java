@@ -27,6 +27,13 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
@@ -35,6 +42,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -328,7 +337,49 @@ public class FrameQuanLyKhachHang extends JPanel {
 		txtDienThoaiTim.setText("");
 		txtDiaChiTim.setText("");
 	}
+	
+	
+	// Sự kiện nút Xuất file
+		private void btnXuatFileAction() {
+		    Workbook workbook = new XSSFWorkbook();
+		    Sheet sheet = workbook.createSheet("DanhSachKhachHang");
 
+		    // Create header row
+		    Row headerRow = sheet.createRow(0);
+		    String[] headers = {"Mã khách hàng", "Tên khách hàng", "Địa chỉ", "Số điện thoại", "Email", "Ngày sinh"};
+		    for (int i = 0; i < headers.length; i++) {
+		        Cell cell = headerRow.createCell(i);
+		        cell.setCellValue(headers[i]);
+		    }
+
+		    // Populate data rows
+		    List<Object[]> List = khachHangDAO.getAllKhachHang();
+		    int rowNum = 1;
+		    for (Object[] kh : List) {
+		        Row row = sheet.createRow(rowNum++);
+		        row.createCell(0).setCellValue((String) kh[0]);
+		        row.createCell(1).setCellValue((String) kh[1]);
+		        row.createCell(2).setCellValue((String) kh[2]);
+		        row.createCell(3).setCellValue((String) kh[3]);
+		        row.createCell(4).setCellValue((String) kh[4]);
+		        row.createCell(5).setCellValue((String) kh[5]);
+		    }
+
+		    // Write the output to a file
+		    try (FileOutputStream fileOut = new FileOutputStream("DanhSachKhachHang.xlsx")) {
+		        workbook.write(fileOut);
+		        JOptionPane.showMessageDialog(this, "Xuất file Excel thành công");
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		        JOptionPane.showMessageDialog(this, "Xuất file Excel thất bại");
+		    } finally {
+		        try {
+		            workbook.close();
+		        } catch (IOException e) {
+		            e.printStackTrace();
+		        }
+		    }
+		}
 	/**
 	 * Launch the application.
 	 */
@@ -407,9 +458,7 @@ public class FrameQuanLyKhachHang extends JPanel {
 		btnIn.setBackground(new Color(167, 62, 20));
 		btnIn.setBounds(1287, 20, 156, 45);
 		panel.add(btnIn);
-		btnIn.addActionListener(e -> {
-			JOptionPane.showMessageDialog(FrameQuanLyKhachHang.this, "Chức năng đang được phát triển!");
-		});
+		btnIn.addActionListener(e -> btnXuatFileAction());
 
 		JLabel lblDiaChi = new JLabel("Địa chỉ:");
 		lblDiaChi.setBounds(55, 147, 160, 40);
@@ -442,6 +491,7 @@ public class FrameQuanLyKhachHang extends JPanel {
 		pnlBackGround.add(lblNgaySinh);
 
 		txtMaKhachHang = new JTextField();
+		txtMaKhachHang.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		txtMaKhachHang.setBounds(225, 31, 317, 43);
 		pnlBackGround.add(txtMaKhachHang);
 		txtMaKhachHang.setColumns(10);
@@ -457,21 +507,25 @@ public class FrameQuanLyKhachHang extends JPanel {
 		});
 
 		txtTenKhachHang = new JTextField();
+		txtTenKhachHang.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		txtTenKhachHang.setColumns(10);
 		txtTenKhachHang.setBounds(225, 90, 317, 43);
 		pnlBackGround.add(txtTenKhachHang);
 
 		txtDiaChi = new JTextField();
+		txtDiaChi.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		txtDiaChi.setColumns(10);
 		txtDiaChi.setBounds(225, 151, 317, 43);
 		pnlBackGround.add(txtDiaChi);
 
 		txtDienThoai = new JTextField();
+		txtDienThoai.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		txtDienThoai.setColumns(10);
 		txtDienThoai.setBounds(740, 31, 259, 43);
 		pnlBackGround.add(txtDienThoai);
 
 		txtEmail = new JTextField();
+		txtEmail.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		txtEmail.setColumns(10);
 		txtEmail.setBounds(740, 90, 259, 43);
 		pnlBackGround.add(txtEmail);
@@ -535,21 +589,25 @@ public class FrameQuanLyKhachHang extends JPanel {
 		pnlTacVu.add(lblNewLabel_1_4);
 
 		txtMaKhachHangTim = new JTextField();
+		txtMaKhachHangTim.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		txtMaKhachHangTim.setBounds(206, 37, 259, 45);
 		pnlTacVu.add(txtMaKhachHangTim);
 		txtMaKhachHangTim.setColumns(10);
 
 		btnTenKhachHangTim = new JTextField();
+		btnTenKhachHangTim.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		btnTenKhachHangTim.setColumns(10);
 		btnTenKhachHangTim.setBounds(206, 119, 259, 45);
 		pnlTacVu.add(btnTenKhachHangTim);
 
 		txtDienThoaiTim = new JTextField();
+		txtDienThoaiTim.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		txtDienThoaiTim.setColumns(10);
 		txtDienThoaiTim.setBounds(206, 203, 259, 45);
 		pnlTacVu.add(txtDienThoaiTim);
 
 		txtDiaChiTim = new JTextField();
+		txtDiaChiTim.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		txtDiaChiTim.setColumns(10);
 		txtDiaChiTim.setBounds(206, 286, 259, 45);
 		pnlTacVu.add(txtDiaChiTim);
